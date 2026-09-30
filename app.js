@@ -533,10 +533,8 @@
     ctx.restore();
   }
 
-  function nextMultiple(threshold) {
-    if (threshold < 8) return threshold * 2;
-    if (threshold === 8) return 10;
-    return threshold + 10;
+  function isAnchorMultiple(multiple) {
+    return multiple === 2 || multiple === 4 || multiple === 8 || (multiple >= 10 && multiple % 10 === 0);
   }
 
   function multipleMarks(result, state) {
@@ -549,10 +547,39 @@
       const times = row.end / paidIn;
       while (times + 1e-9 >= threshold && threshold <= 500) {
         marks.push({ year: row.year, multiple: threshold, value: row.end });
-        threshold = nextMultiple(threshold);
+        threshold += 1;
       }
     });
     return marks;
+  }
+
+  function markBoxSize(ctx, mark) {
+    ctx.font = "700 12px Segoe UI, Apple SD Gothic Neo, sans-serif";
+    const titleW = ctx.measureText(`${mark.multiple}x`).width;
+    ctx.font = "11px Segoe UI, Apple SD Gothic Neo, sans-serif";
+    const yearW = ctx.measureText(t("yearLabel", mark.year)).width;
+    return { w: Math.ceil(Math.max(titleW, yearW) + 14), h: 32 };
+  }
+
+  function chooseVisibleMarks(marks, xAt, sizeOf) {
+    const chosen = marks.filter((mark) => isAnchorMultiple(mark.multiple));
+    const extras = marks.filter((mark) => !isAnchorMultiple(mark.multiple));
+    const gapToChosen = (mark, group) => {
+      const x = xAt(mark.year);
+      return group.reduce((best, other) => Math.min(best, Math.abs(xAt(other.year) - x)), Infinity);
+    };
+    extras.sort((a, b) => gapToChosen(b, chosen) - gapToChosen(a, chosen) || a.multiple - b.multiple);
+    extras.forEach((mark) => {
+      const x = xAt(mark.year);
+      const size = sizeOf(mark);
+      const clear = chosen.every((other) => {
+        const otherSize = sizeOf(other);
+        return Math.abs(xAt(other.year) - x) >= (size.w + otherSize.w) / 2 + 8;
+      });
+      if (clear) chosen.push(mark);
+    });
+    chosen.sort((a, b) => a.year - b.year || a.multiple - b.multiple);
+    return chosen;
   }
 
   function boxesOverlap(a, b) {
@@ -560,24 +587,22 @@
   }
 
   function drawMultipleMarks(ctx, result, state, xAt, yAt, cssWidth) {
-    const marks = multipleMarks(result, state);
+    const marks = chooseVisibleMarks(multipleMarks(result, state), xAt, (mark) => markBoxSize(ctx, mark));
     const placed = [];
     ctx.save();
-    ctx.font = "700 12px Segoe UI, Apple SD Gothic Neo, sans-serif";
     marks.forEach((mark) => {
       const x = xAt(mark.year);
       const y = yAt(mark.value);
-      const text = `${mark.multiple}x`;
-      const boxPad = 6;
-      const boxW = ctx.measureText(text).width + boxPad * 2;
-      const boxH = 20;
+      const title = `${mark.multiple}x`;
+      const yearText = t("yearLabel", mark.year);
+      const { w: boxW, h: boxH } = markBoxSize(ctx, mark);
       const boxX = Math.max(4, Math.min(x - boxW / 2, cssWidth - boxW - 4));
       const candidates = [];
       for (let step = 0; step < 6; step += 1) {
         candidates.push(y - boxH - 8 - step * (boxH + 4));
         candidates.push(y + 8 + step * (boxH + 4));
       }
-      let boxY = candidates[0];
+      let boxY = candidates.find((candidate) => candidate >= 4) ?? y + 8;
       for (const candidate of candidates) {
         const box = { x: boxX, y: candidate, w: boxW, h: boxH };
         if (candidate < 4) continue;
@@ -599,8 +624,12 @@
       ctx.roundRect(boxX, boxY, boxW, boxH, 5);
       ctx.fill();
       ctx.stroke();
+      ctx.font = "700 12px Segoe UI, Apple SD Gothic Neo, sans-serif";
       ctx.fillStyle = "#f6ecff";
-      ctx.fillText(text, boxX + boxPad, boxY + 14);
+      ctx.fillText(title, boxX + (boxW - ctx.measureText(title).width) / 2, boxY + 13);
+      ctx.font = "11px Segoe UI, Apple SD Gothic Neo, sans-serif";
+      ctx.fillStyle = "#e7c6ff";
+      ctx.fillText(yearText, boxX + (boxW - ctx.measureText(yearText).width) / 2, boxY + 26);
     });
     ctx.restore();
   }
