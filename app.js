@@ -8,7 +8,7 @@
     { id: "eur-200", currency: "EUR", monthlyContribution: 200, annualReturn: 6, labelKo: "월 €200 · 6%", labelEn: "€200/mo · 6%" },
     { id: "eur-500", currency: "EUR", monthlyContribution: 500, annualReturn: 6, labelKo: "월 €500 · 6%", labelEn: "€500/mo · 6%" },
     { id: "eur-1000", currency: "EUR", monthlyContribution: 1000, annualReturn: 6, labelKo: "월 €1,000 · 6%", labelEn: "€1,000/mo · 6%" },
-    { id: "krw-500000", currency: "KRW", monthlyContribution: 500000, annualReturn: 6, labelKo: "월 50만 원 · 6%", labelEn: "₩500,000/mo · 6%" },
+    { id: "krw-500000", currency: "KRW", monthlyContribution: 500000, annualReturn: 6, labelKo: "월 50만원 · 6%", labelEn: "50만원/mo · 6%" },
   ];
 
   const DEFAULTS = {
@@ -160,7 +160,7 @@
   }
 
   function currencySymbol(currency) {
-    return currency === "KRW" ? "₩" : "€";
+    return currency === "KRW" ? "원" : "€";
   }
 
   function updateCurrencySuffixes() {
@@ -296,7 +296,21 @@
     };
   }
 
+  function formatKrw(amount) {
+    const sign = amount < 0 ? "-" : "";
+    const abs = Math.abs(amount);
+    if (abs < 10_000) return `${sign}${Math.round(abs).toLocaleString("ko-KR")}원`;
+    const man = Math.floor(abs / 10_000);
+    const eok = Math.floor(man / 10_000);
+    const rest = man % 10_000;
+    const parts = [];
+    if (eok) parts.push(`${eok.toLocaleString("ko-KR")}억`);
+    if (rest) parts.push(`${rest}만`);
+    return `${sign}${parts.join(" ")}원`;
+  }
+
   function formatMoney(amount, currency, language) {
+    if (currency === "KRW") return formatKrw(amount);
     const locale = language === "ko" ? "ko-KR" : "en-IE";
     const rounded = Math.round(amount);
     try {
@@ -433,11 +447,12 @@
     const symbol = currencySymbol(currency);
     if (currency === "KRW") {
       if (amount >= 100_000_000) {
-        return `${symbol}${Math.round(amount / 100_000_000)}억`;
+        return `${Math.round(amount / 100_000_000)}억`;
       }
       if (amount >= 10_000) {
-        return `${symbol}${Math.round(amount / 10_000)}만`;
+        return `${Math.round(amount / 10_000)}만`;
       }
+      return `${Math.round(amount).toLocaleString(locale)}원`;
     } else if (amount >= 1_000_000) {
       return `${symbol}${Math.round(amount / 1_000_000)}M`;
     } else if (amount >= 1000) {
