@@ -25,7 +25,7 @@
 
   const I18N = {
     ko: {
-      appTitle: "눈덩이",
+      appTitle: "눈덩이 - 파이어 계산기",
       tagline: "적립하고, 인출하며, 해마다 불어나는 자산",
       language: "언어",
       currency: "통화",
@@ -69,7 +69,7 @@
       yearLabel: (n) => `${n}년차`,
     },
     en: {
-      appTitle: "Snowball",
+      appTitle: "Snowball - FIRE Calculator",
       tagline: "Contribute, withdraw, and watch wealth grow year by year",
       language: "Language",
       currency: "Currency",
@@ -149,8 +149,7 @@
 
   function applyI18n() {
     document.documentElement.lang = els.language.value;
-    document.title =
-      els.language.value === "ko" ? "눈덩이 · Snowball" : "Snowball · 눈덩이";
+    document.title = t("appTitle");
     document.querySelectorAll("[data-i18n]").forEach((node) => {
       const key = node.getAttribute("data-i18n");
       node.textContent = t(key);

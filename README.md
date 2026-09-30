@@ -1,4 +1,4 @@
-# Snowball · 눈덩이
+# 눈덩이 - 파이어 계산기 / Snowball - FIRE Calculator
 
 Retirement and dollar-cost averaging calculator.
 
