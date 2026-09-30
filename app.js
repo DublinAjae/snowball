@@ -367,7 +367,7 @@
           <td>${moneyHtml(row.contrib, state.currency, state.language)}</td>
           <td>${moneyHtml(row.withdrawn, state.currency, state.language)}</td>
           <td class="${row.growth > 0 ? "num-up" : row.growth < 0 ? "num-down" : ""}">${moneyHtml(row.growth, state.currency, state.language)}</td>
-          <td>${moneyHtml(row.end, state.currency, state.language)}</td>
+          <td class="col-end">${moneyHtml(row.end, state.currency, state.language)}</td>
         </tr>`;
       })
       .join("");
@@ -515,7 +515,7 @@
       initialBalance: 0,
       monthlyContribution: example.monthlyContribution,
       annualReturn: example.annualReturn,
-      years: 30,
+      years: 40,
       withdrawalMode: "none",
     };
   }
@@ -527,7 +527,7 @@
         state.monthlyContribution === example.monthlyContribution &&
         state.annualReturn === example.annualReturn &&
         state.initialBalance === 0 &&
-        state.years === 30 &&
+        state.years === 40 &&
         state.withdrawalMode === "none"
     );
   }

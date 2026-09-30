@@ -339,6 +339,16 @@ button,
   word-break: break-word;
 }
 
+.stat-final {
+  background: rgba(126, 74, 176, 0.38);
+  border-color: #c9a0e8;
+}
+
+.stat-final .stat-value {
+  color: #e7c6ff;
+  font-size: 1.35rem;
+}
+
 .stat-value.positive {
   color: var(--good);
 }
@@ -424,6 +434,19 @@ tbody tr:hover td {
 
 tbody tr:hover td:first-child {
   background: #243041;
+}
+
+th.col-end,
+td.col-end {
+  background: rgba(126, 74, 176, 0.34);
+}
+
+thead th.col-end {
+  background: #3a2a4d;
+}
+
+tbody tr:hover td.col-end {
+  background: rgba(126, 74, 176, 0.5);
 }
 
 .examples {

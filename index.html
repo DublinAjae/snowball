@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Snowball — retirement & dollar-cost averaging calculator" />
   <title>눈덩이 - 파이어 계산기</title>
-  <link rel="stylesheet" href="styles.css?v=10" />
+  <link rel="stylesheet" href="styles.css?v=12" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄</text></svg>" />
 </head>
 <body>
@@ -140,7 +140,7 @@
         </div>
 
         <div class="summary" id="summary">
-          <article class="stat">
+          <article class="stat stat-final">
             <h3 data-i18n="finalBalance">최종 자산</h3>
             <p class="stat-value" id="finalBalance">—</p>
           </article>
@@ -171,7 +171,7 @@
                 <th data-i18n="colContrib">납입</th>
                 <th data-i18n="colWithdraw">인출</th>
                 <th data-i18n="colGrowth">수익</th>
-                <th data-i18n="colEnd">연말</th>
+                <th class="col-end" data-i18n="colEnd">연말</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -205,6 +205,6 @@
     </footer>
   </div>
 
-  <script src="app.js?v=11"></script>
+  <script src="app.js?v=12"></script>
 </body>
 </html>
