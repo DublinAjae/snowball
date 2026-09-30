@@ -533,37 +533,60 @@
     ctx.restore();
   }
 
+  function nextMultiple(threshold) {
+    if (threshold < 8) return threshold * 2;
+    if (threshold === 8) return 10;
+    return threshold + 10;
+  }
+
   function multipleMarks(result, state) {
     let paidIn = state.initialBalance;
     const marks = [];
-    let threshold = 10;
+    let threshold = 2;
     result.years.forEach((row) => {
       paidIn += row.contrib;
       if (paidIn <= 0 || row.end <= 0) return;
       const times = row.end / paidIn;
       while (times + 1e-9 >= threshold && threshold <= 500) {
         marks.push({ year: row.year, multiple: threshold, value: row.end });
-        threshold += 10;
+        threshold = nextMultiple(threshold);
       }
     });
     return marks;
   }
 
+  function boxesOverlap(a, b) {
+    return a.x < b.x + b.w + 4 && a.x + a.w + 4 > b.x && a.y < b.y + b.h + 2 && a.y + a.h + 2 > b.y;
+  }
+
   function drawMultipleMarks(ctx, result, state, xAt, yAt, cssWidth) {
     const marks = multipleMarks(result, state);
+    const placed = [];
     ctx.save();
     ctx.font = "700 12px Segoe UI, Apple SD Gothic Neo, sans-serif";
-    marks.forEach((mark, index) => {
+    marks.forEach((mark) => {
       const x = xAt(mark.year);
       const y = yAt(mark.value);
       const text = `${mark.multiple}x`;
       const boxPad = 6;
       const boxW = ctx.measureText(text).width + boxPad * 2;
       const boxH = 20;
-      let boxX = x - boxW / 2;
-      boxX = Math.max(4, Math.min(boxX, cssWidth - boxW - 4));
-      let boxY = y - boxH - 10 - (index % 2) * 4;
-      if (boxY < 4) boxY = y + 10;
+      const boxX = Math.max(4, Math.min(x - boxW / 2, cssWidth - boxW - 4));
+      const candidates = [];
+      for (let step = 0; step < 6; step += 1) {
+        candidates.push(y - boxH - 8 - step * (boxH + 4));
+        candidates.push(y + 8 + step * (boxH + 4));
+      }
+      let boxY = candidates[0];
+      for (const candidate of candidates) {
+        const box = { x: boxX, y: candidate, w: boxW, h: boxH };
+        if (candidate < 4) continue;
+        if (!placed.some((other) => boxesOverlap(box, other))) {
+          boxY = candidate;
+          break;
+        }
+      }
+      placed.push({ x: boxX, y: boxY, w: boxW, h: boxH });
 
       ctx.fillStyle = "#e7c6ff";
       ctx.beginPath();
