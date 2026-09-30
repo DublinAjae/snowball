@@ -67,6 +67,7 @@
       emptyScenarios: "저장된 시나리오가 없습니다.",
       unnamed: "이름 없는 시나리오",
       yearLabel: (n) => `${n}년차`,
+      periodLabel: (n) => `${n}년`,
     },
     en: {
       appTitle: "Snowball - FIRE Calculator",
@@ -111,6 +112,7 @@
       emptyScenarios: "No saved scenarios yet.",
       unnamed: "Untitled scenario",
       yearLabel: (n) => `Year ${n}`,
+      periodLabel: (n) => `${n} years`,
     },
   };
 
@@ -130,6 +132,7 @@
     scenarioList: document.getElementById("scenarioList"),
     yearTableBody: document.querySelector("#yearTable tbody"),
     chart: document.getElementById("chart"),
+    resultYears: document.getElementById("resultYears"),
     finalBalance: document.getElementById("finalBalance"),
     totalContributed: document.getElementById("totalContributed"),
     totalWithdrawn: document.getElementById("totalWithdrawn"),
@@ -338,6 +341,7 @@
   }
 
   function renderSummary(result, state) {
+    els.resultYears.textContent = t("periodLabel", state.years);
     els.finalBalance.innerHTML = moneyHtml(
       result.finalBalance,
       state.currency,
