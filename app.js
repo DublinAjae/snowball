@@ -482,6 +482,8 @@
     ctx.lineWidth = 2.5;
     ctx.stroke();
 
+    drawMultipleMarks(ctx, result, state, xAt, yAt, cssWidth);
+
     const labelStep = state.years > 20 ? 5 : state.years > 10 ? 2 : 1;
     ctx.fillStyle = "#93a1b3";
     for (let year = 0; year <= state.years; year += labelStep) {
@@ -528,6 +530,55 @@
     ctx.stroke();
     ctx.fillStyle = "#f6ecff";
     ctx.fillText(text, boxX + boxPad, boxY + 17);
+    ctx.restore();
+  }
+
+  function multipleMarks(result, state) {
+    let paidIn = state.initialBalance;
+    const marks = [];
+    let threshold = 10;
+    result.years.forEach((row) => {
+      paidIn += row.contrib;
+      if (paidIn <= 0 || row.end <= 0) return;
+      const times = row.end / paidIn;
+      while (times + 1e-9 >= threshold && threshold <= 500) {
+        marks.push({ year: row.year, multiple: threshold, value: row.end });
+        threshold += 10;
+      }
+    });
+    return marks;
+  }
+
+  function drawMultipleMarks(ctx, result, state, xAt, yAt, cssWidth) {
+    const marks = multipleMarks(result, state);
+    ctx.save();
+    ctx.font = "700 12px Segoe UI, Apple SD Gothic Neo, sans-serif";
+    marks.forEach((mark, index) => {
+      const x = xAt(mark.year);
+      const y = yAt(mark.value);
+      const text = `${mark.multiple}x`;
+      const boxPad = 6;
+      const boxW = ctx.measureText(text).width + boxPad * 2;
+      const boxH = 20;
+      let boxX = x - boxW / 2;
+      boxX = Math.max(4, Math.min(boxX, cssWidth - boxW - 4));
+      let boxY = y - boxH - 10 - (index % 2) * 4;
+      if (boxY < 4) boxY = y + 10;
+
+      ctx.fillStyle = "#e7c6ff";
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "rgba(32, 20, 48, 0.94)";
+      ctx.strokeStyle = "#c9a0e8";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(boxX, boxY, boxW, boxH, 5);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#f6ecff";
+      ctx.fillText(text, boxX + boxPad, boxY + 14);
+    });
     ctx.restore();
   }
 
