@@ -764,7 +764,8 @@
 
     els.chart.addEventListener("pointermove", (event) => {
       if (!chartModel) return;
-      drawChart(chartModel.result, chartModel.state, hoverYearAt(event.offsetX));
+      const bounds = els.chart.getBoundingClientRect();
+      drawChart(chartModel.result, chartModel.state, hoverYearAt(event.clientX - bounds.left));
     });
     els.chart.addEventListener("pointerleave", () => {
       if (!chartModel) return;
