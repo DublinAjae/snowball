@@ -286,19 +286,18 @@
 
   function formatMoney(amount, currency, language) {
     const locale = language === "ko" ? "ko-KR" : "en-IE";
-    const maximumFractionDigits = currency === "KRW" ? 0 : 2;
+    const rounded = Math.round(amount);
     try {
       return new Intl.NumberFormat(locale, {
         style: "currency",
         currency,
-        maximumFractionDigits,
-        minimumFractionDigits: currency === "KRW" ? 0 : 0,
-      }).format(amount);
+        maximumFractionDigits: 0,
+        minimumFractionDigits: 0,
+      }).format(rounded);
     } catch {
       const symbol = currencySymbol(currency);
-      const digits = currency === "KRW" ? 0 : 2;
-      return `${symbol}${amount.toLocaleString(locale, {
-        maximumFractionDigits: digits,
+      return `${symbol}${rounded.toLocaleString(locale, {
+        maximumFractionDigits: 0,
         minimumFractionDigits: 0,
       })}`;
     }
@@ -422,15 +421,15 @@
     const symbol = currencySymbol(currency);
     if (currency === "KRW") {
       if (amount >= 100_000_000) {
-        return `${symbol}${(amount / 100_000_000).toFixed(1)}억`;
+        return `${symbol}${Math.round(amount / 100_000_000)}억`;
       }
       if (amount >= 10_000) {
-        return `${symbol}${(amount / 10_000).toFixed(amount >= 1_000_000 ? 0 : 1)}만`;
+        return `${symbol}${Math.round(amount / 10_000)}만`;
       }
     } else if (amount >= 1_000_000) {
-      return `${symbol}${(amount / 1_000_000).toFixed(1)}M`;
+      return `${symbol}${Math.round(amount / 1_000_000)}M`;
     } else if (amount >= 1000) {
-      return `${symbol}${(amount / 1000).toFixed(amount >= 10000 ? 0 : 1)}k`;
+      return `${symbol}${Math.round(amount / 1000)}k`;
     }
     return `${symbol}${Math.round(amount).toLocaleString(locale)}`;
   }
