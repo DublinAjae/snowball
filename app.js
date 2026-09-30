@@ -68,6 +68,8 @@
       unnamed: "이름 없는 시나리오",
       chartStart: "시작",
       yearLabel: (n) => `${n}년차`,
+      stepDown: "줄이기",
+      stepUp: "늘리기",
       chartAssets: "자산",
       chartContributed: "누적 납입",
       chartGain: "누적 수익",
@@ -117,6 +119,8 @@
       unnamed: "Untitled scenario",
       chartStart: "Start",
       yearLabel: (n) => `Year ${n}`,
+      stepDown: "Decrease",
+      stepUp: "Increase",
       chartAssets: "Balance",
       chartContributed: "Contributed",
       chartGain: "Gain",
@@ -167,6 +171,9 @@
     });
     els.scenarioName.placeholder =
       els.language.value === "ko" ? "예: 월 200€ · 7%" : "e.g. €200/mo · 7%";
+    document.querySelectorAll("[data-nudge]").forEach((button) => {
+      button.setAttribute("aria-label", button.dataset.nudge === "up" ? t("stepUp") : t("stepDown"));
+    });
   }
 
   function currencySymbol(currency) {
@@ -232,7 +239,7 @@
       annualReturn: num(els.annualReturn),
       years: clampYears(num(els.years, 30)),
       withdrawalMode: mode,
-      monthlyWithdrawal: Math.max(0, num(els.monthlyWithdrawal)),
+      monthlyWithdrawal: Math.max(0, parseMoney(els.monthlyWithdrawal.value)),
       annualWithdrawalPercent: Math.max(0, num(els.annualWithdrawalPercent)),
     };
   }
@@ -244,7 +251,7 @@
     els.monthlyContribution.value = formatGrouped(state.monthlyContribution);
     els.annualReturn.value = state.annualReturn;
     els.years.value = state.years;
-    els.monthlyWithdrawal.value = state.monthlyWithdrawal;
+    els.monthlyWithdrawal.value = formatGrouped(state.monthlyWithdrawal);
     els.annualWithdrawalPercent.value = state.annualWithdrawalPercent;
 
     document.querySelectorAll('input[name="withdrawalMode"]').forEach((radio) => {
@@ -431,7 +438,13 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, cssWidth, cssHeight);
 
-    const padding = { top: 24, right: 18, bottom: 36, left: state.currency === "KRW" ? 80 : 64 };
+    const narrow = cssWidth < 520;
+    const padding = {
+      top: narrow ? 18 : 24,
+      right: narrow ? 10 : 18,
+      bottom: narrow ? 30 : 36,
+      left: state.currency === "KRW" ? (narrow ? 68 : 80) : narrow ? 52 : 64,
+    };
     const plotW = cssWidth - padding.left - padding.right;
     const plotH = cssHeight - padding.top - padding.bottom;
 
@@ -841,7 +854,11 @@
   }
 
   function onInputChange(event) {
-    if (event?.target === els.initialBalance || event?.target === els.monthlyContribution) {
+    if (
+      event?.target === els.initialBalance ||
+      event?.target === els.monthlyContribution ||
+      event?.target === els.monthlyWithdrawal
+    ) {
       formatMoneyField(event.target);
     }
     syncWithdrawalFields();
@@ -852,6 +869,73 @@
     syncExampleUrl(readState());
     renderExamples();
     renderScenarios();
+  }
+
+  function moneyStep(amount, currency, direction) {
+    const basis = direction < 0 ? Math.max(0, amount - 1) : amount;
+    if (currency === "KRW") {
+      if (basis >= 100_000_000) return 10_000_000;
+      if (basis >= 10_000_000) return 1_000_000;
+      if (basis >= 1_000_000) return 100_000;
+      return 10_000;
+    }
+    if (basis >= 100_000) return 10_000;
+    if (basis >= 10_000) return 1_000;
+    if (basis >= 1_000) return 100;
+    return 50;
+  }
+
+  function roundTenth(value) {
+    return Math.round(value * 10) / 10;
+  }
+
+  function nudgeInput(input, direction) {
+    const currency = els.currency.value;
+    if (input === els.initialBalance || input === els.monthlyContribution || input === els.monthlyWithdrawal) {
+      const current = parseMoney(input.value);
+      input.value = formatGrouped(Math.max(0, current + direction * moneyStep(current, currency, direction)));
+    } else if (input === els.years) {
+      input.value = String(clampYears(num(input, 30) + direction));
+    } else if (input === els.annualReturn) {
+      input.value = String(roundTenth(Math.min(100, Math.max(-50, num(input) + direction * 0.5))));
+    } else if (input === els.annualWithdrawalPercent) {
+      input.value = String(roundTenth(Math.min(100, Math.max(0, num(input) + direction * 0.5))));
+    } else {
+      return;
+    }
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  function bindSteppers() {
+    document.querySelectorAll(".step-btn").forEach((button) => {
+      const input = button.parentElement.querySelector("input");
+      if (!input) return;
+      const direction = button.dataset.nudge === "up" ? 1 : -1;
+      let repeat = 0;
+
+      const stop = () => {
+        window.clearTimeout(repeat);
+        repeat = 0;
+      };
+
+      button.addEventListener("pointerdown", (event) => {
+        if (event.button !== 0) return;
+        event.preventDefault();
+        nudgeInput(input, direction);
+        let wait = 420;
+        const tick = () => {
+          repeat = window.setTimeout(() => {
+            nudgeInput(input, direction);
+            wait = Math.max(70, Math.round(wait * 0.82));
+            tick();
+          }, wait);
+        };
+        tick();
+      });
+      button.addEventListener("pointerup", stop);
+      button.addEventListener("pointerleave", stop);
+      button.addEventListener("pointercancel", stop);
+    });
   }
 
   function bindEvents() {
@@ -870,6 +954,8 @@
       el.addEventListener("input", onInputChange);
       el.addEventListener("change", onInputChange);
     });
+
+    bindSteppers();
 
     document.querySelectorAll('input[name="withdrawalMode"]').forEach((radio) => {
       radio.addEventListener("change", onInputChange);

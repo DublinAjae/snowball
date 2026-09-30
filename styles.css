@@ -114,9 +114,13 @@ button,
 
 .layout {
   display: grid;
-  grid-template-columns: minmax(280px, 360px) 1fr;
+  grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
   gap: 1.25rem;
   align-items: start;
+}
+
+.layout > * {
+  min-width: 0;
 }
 
 .panel {
@@ -157,10 +161,40 @@ button,
   font-size: 0.88rem;
 }
 
+.stepper {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr) 2.6rem;
+  gap: 0.4rem;
+  align-items: stretch;
+}
+
+.step-btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-elevated);
+  color: var(--text);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  touch-action: manipulation;
+}
+
+.step-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.step-btn:active {
+  transform: translateY(1px);
+}
+
 .input-with-suffix {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: stretch;
+  min-width: 0;
   border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
@@ -176,11 +210,24 @@ button,
 .field > input[type="text"],
 .field > input[type="number"] {
   width: 100%;
+  min-width: 0;
   border: 0;
   background: transparent;
   color: var(--text);
   padding: 0.7rem 0.85rem;
   outline: none;
+  font-variant-numeric: tabular-nums;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
 }
 
 .field > input[type="text"],
@@ -374,6 +421,7 @@ button,
 
 .table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border: 1px solid var(--border);
   border-radius: 12px;
 }
@@ -529,14 +577,100 @@ tbody tr:hover td.col-end {
 
 @media (max-width: 520px) {
   .app {
-    padding: 1rem 0.85rem 2rem;
+    padding: 0.85rem 0.75rem 2.25rem;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .brand {
+    align-items: flex-start;
+  }
+
+  .brand-mark {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 12px;
+    font-size: 1.2rem;
+  }
+
+  .brand h1 {
+    font-size: 1.28rem;
+    line-height: 1.25;
+  }
+
+  .tagline {
+    font-size: 0.85rem;
+  }
+
+  .header-controls {
+    width: 100%;
+  }
+
+  .panel {
+    padding: 0.95rem 0.8rem 1.1rem;
+  }
+
+  .example-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .example-btn {
+    width: 100%;
+    text-align: center;
   }
 
   .summary {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem;
   }
 
-  .stat-value {
-    font-size: 1.25rem;
+  .stat {
+    padding: 0.7rem 0.7rem;
+  }
+
+  .stat-value,
+  .stat-final .stat-value {
+    font-size: 1.02rem;
+  }
+
+  .chart-wrap {
+    padding: 0.4rem 0.25rem 0.2rem;
+  }
+
+  .input-with-suffix input,
+  .field > input[type="text"],
+  .chip select,
+  .btn,
+  .file-btn {
+    font-size: 16px;
+  }
+
+  .stepper {
+    grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
+  }
+
+  .step-btn {
+    min-height: 2.75rem;
+  }
+
+  .btn-row .btn,
+  .btn-row .file-btn {
+    flex: 1 1 calc(50% - 0.5rem);
+    text-align: center;
+  }
+
+  th,
+  td {
+    padding: 0.5rem 0.45rem;
+    font-size: 0.78rem;
+  }
+
+  .social a {
+    flex: 1 1 auto;
+    justify-content: center;
   }
 }

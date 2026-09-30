@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Snowball — retirement & dollar-cost averaging calculator" />
   <title>눈덩이 - 복리 계산기</title>
-  <link rel="stylesheet" href="styles.css?v=16" />
+  <link rel="stylesheet" href="styles.css?v=17" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄</text></svg>" />
 </head>
 <body>
@@ -51,33 +51,49 @@
 
         <div class="field">
           <label for="initialBalance" data-i18n="initialBalance">기초 자금</label>
-          <div class="input-with-suffix">
-            <input id="initialBalance" type="text" inputmode="numeric" autocomplete="off" />
-            <span class="suffix currency-suffix">€</span>
+          <div class="stepper">
+            <button type="button" class="step-btn" data-nudge="down" aria-label="줄이기">−</button>
+            <div class="input-with-suffix">
+              <input id="initialBalance" type="text" inputmode="numeric" autocomplete="off" />
+              <span class="suffix currency-suffix">€</span>
+            </div>
+            <button type="button" class="step-btn" data-nudge="up" aria-label="늘리기">+</button>
           </div>
         </div>
 
         <div class="field">
           <label for="monthlyContribution" data-i18n="monthlyContribution">월 적립액</label>
-          <div class="input-with-suffix">
-            <input id="monthlyContribution" type="text" inputmode="numeric" autocomplete="off" />
-            <span class="suffix currency-suffix">€</span>
+          <div class="stepper">
+            <button type="button" class="step-btn" data-nudge="down" aria-label="줄이기">−</button>
+            <div class="input-with-suffix">
+              <input id="monthlyContribution" type="text" inputmode="numeric" autocomplete="off" />
+              <span class="suffix currency-suffix">€</span>
+            </div>
+            <button type="button" class="step-btn" data-nudge="up" aria-label="늘리기">+</button>
           </div>
         </div>
 
         <div class="field">
           <label for="annualReturn" data-i18n="annualReturn">연평균 수익률 (%)</label>
-          <div class="input-with-suffix">
-            <input id="annualReturn" type="number" step="0.1" inputmode="decimal" />
-            <span class="suffix">%</span>
+          <div class="stepper">
+            <button type="button" class="step-btn" data-nudge="down" aria-label="줄이기">−</button>
+            <div class="input-with-suffix">
+              <input id="annualReturn" type="number" step="0.1" inputmode="decimal" />
+              <span class="suffix">%</span>
+            </div>
+            <button type="button" class="step-btn" data-nudge="up" aria-label="늘리기">+</button>
           </div>
         </div>
 
         <div class="field">
           <label for="years" data-i18n="years">기간 (년)</label>
-          <div class="input-with-suffix">
-            <input id="years" type="number" min="1" max="80" step="1" inputmode="numeric" />
-            <span class="suffix" data-i18n="yearsUnit">년</span>
+          <div class="stepper">
+            <button type="button" class="step-btn" data-nudge="down" aria-label="줄이기">−</button>
+            <div class="input-with-suffix">
+              <input id="years" type="number" min="1" max="80" step="1" inputmode="numeric" />
+              <span class="suffix" data-i18n="yearsUnit">년</span>
+            </div>
+            <button type="button" class="step-btn" data-nudge="up" aria-label="늘리기">+</button>
           </div>
         </div>
 
@@ -100,17 +116,25 @@
 
           <div class="field withdrawal-field" id="fixedWithdrawalField" hidden>
             <label for="monthlyWithdrawal" data-i18n="monthlyWithdrawal">월 인출액</label>
-            <div class="input-with-suffix">
-              <input id="monthlyWithdrawal" type="number" min="0" step="any" inputmode="decimal" />
-              <span class="suffix currency-suffix">€</span>
+            <div class="stepper">
+              <button type="button" class="step-btn" data-nudge="down" aria-label="줄이기">−</button>
+              <div class="input-with-suffix">
+                <input id="monthlyWithdrawal" type="text" inputmode="numeric" autocomplete="off" />
+                <span class="suffix currency-suffix">€</span>
+              </div>
+              <button type="button" class="step-btn" data-nudge="up" aria-label="늘리기">+</button>
             </div>
           </div>
 
           <div class="field withdrawal-field" id="percentWithdrawalField" hidden>
             <label for="annualWithdrawalPercent" data-i18n="annualWithdrawalPercent">연 인출 비율 (%)</label>
-            <div class="input-with-suffix">
-              <input id="annualWithdrawalPercent" type="number" min="0" max="100" step="0.1" inputmode="decimal" />
-              <span class="suffix">%</span>
+            <div class="stepper">
+              <button type="button" class="step-btn" data-nudge="down" aria-label="줄이기">−</button>
+              <div class="input-with-suffix">
+                <input id="annualWithdrawalPercent" type="number" min="0" max="100" step="0.1" inputmode="decimal" />
+                <span class="suffix">%</span>
+              </div>
+              <button type="button" class="step-btn" data-nudge="up" aria-label="늘리기">+</button>
             </div>
             <p class="hint" data-i18n="percentHint">매년 초 잔액의 비율을 12개월로 나눠 인출합니다.</p>
           </div>
@@ -205,6 +229,6 @@
     </footer>
   </div>
 
-  <script src="app.js?v=23"></script>
+  <script src="app.js?v=24"></script>
 </body>
 </html>
