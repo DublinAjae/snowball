@@ -665,8 +665,13 @@ tbody tr:hover td.col-end {
 
   th,
   td {
-    padding: 0.5rem 0.45rem;
+    padding: 0.5rem 0.4rem;
     font-size: 0.78rem;
+  }
+
+  #yearTable th:nth-child(2),
+  #yearTable td:nth-child(2) {
+    display: none;
   }
 
   .social a {
