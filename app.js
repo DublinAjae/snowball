@@ -574,7 +574,7 @@
       const size = sizeOf(mark);
       const clear = chosen.every((other) => {
         const otherSize = sizeOf(other);
-        return Math.abs(xAt(other.year) - x) >= (size.w + otherSize.w) / 2 + 8;
+        return Math.abs(xAt(other.year) - x) >= (size.w + otherSize.w) / 2 + 2;
       });
       if (clear) chosen.push(mark);
     });
