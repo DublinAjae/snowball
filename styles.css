@@ -9,6 +9,7 @@
   --accent-strong: #3aa8ef;
   --good: #4fd1a5;
   --warn: #f0b35a;
+  --unit: #ffd54a;
   --danger: #f07178;
   --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   --radius: 16px;
@@ -360,10 +361,13 @@ button,
 }
 
 .table-wrap {
-  overflow: auto;
+  overflow-x: auto;
   border: 1px solid var(--border);
   border-radius: 12px;
-  max-height: 420px;
+}
+
+.unit {
+  color: var(--unit);
 }
 
 table {

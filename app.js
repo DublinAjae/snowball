@@ -8,7 +8,7 @@
     { id: "eur-200", currency: "EUR", monthlyContribution: 200, annualReturn: 6, labelKo: "월 €200 · 6%", labelEn: "€200/mo · 6%" },
     { id: "eur-500", currency: "EUR", monthlyContribution: 500, annualReturn: 6, labelKo: "월 €500 · 6%", labelEn: "€500/mo · 6%" },
     { id: "eur-1000", currency: "EUR", monthlyContribution: 1000, annualReturn: 6, labelKo: "월 €1,000 · 6%", labelEn: "€1,000/mo · 6%" },
-    { id: "krw-500000", currency: "KRW", monthlyContribution: 500000, annualReturn: 6, labelKo: "월 50 만원 · 6%", labelEn: "50 만원/mo · 6%" },
+    { id: "krw-500000", currency: "KRW", monthlyContribution: 500000, annualReturn: 6, labelKo: "월 50만원 · 6%", labelEn: "50만원/mo · 6%" },
   ];
 
   const DEFAULTS = {
@@ -303,9 +303,9 @@
     const man = Math.floor(abs / 10_000);
     const eok = Math.floor(man / 10_000);
     const rest = man % 10_000;
-    if (eok && rest) return `${sign}${eok.toLocaleString("ko-KR")} 억 ${rest} 만원`;
-    if (eok) return `${sign}${eok.toLocaleString("ko-KR")} 억원`;
-    return `${sign}${rest.toLocaleString("ko-KR")} 만원`;
+    if (eok && rest) return `${sign}${eok.toLocaleString("ko-KR")}억 ${rest}만원`;
+    if (eok) return `${sign}${eok.toLocaleString("ko-KR")}억원`;
+    return `${sign}${rest.toLocaleString("ko-KR")}만원`;
   }
 
   function formatMoney(amount, currency, language) {
@@ -328,23 +328,30 @@
     }
   }
 
+  function moneyHtml(amount, currency, language) {
+    return escapeHtml(formatMoney(amount, currency, language)).replace(
+      /(€|억|만원|원)/g,
+      '<span class="unit">$1</span>'
+    );
+  }
+
   function renderSummary(result, state) {
-    els.finalBalance.textContent = formatMoney(
+    els.finalBalance.innerHTML = moneyHtml(
       result.finalBalance,
       state.currency,
       state.language
     );
-    els.totalContributed.textContent = formatMoney(
+    els.totalContributed.innerHTML = moneyHtml(
       result.totalContributed + state.initialBalance,
       state.currency,
       state.language
     );
-    els.totalWithdrawn.textContent = formatMoney(
+    els.totalWithdrawn.innerHTML = moneyHtml(
       result.totalWithdrawn,
       state.currency,
       state.language
     );
-    els.gain.textContent = formatMoney(result.gain, state.currency, state.language);
+    els.gain.innerHTML = moneyHtml(result.gain, state.currency, state.language);
     els.gain.classList.toggle("positive", result.gain > 0);
     els.gain.classList.toggle("negative", result.gain < 0);
   }
@@ -354,11 +361,11 @@
       .map((row) => {
         return `<tr>
           <td>${t("yearLabel", row.year)}</td>
-          <td>${formatMoney(row.start, state.currency, state.language)}</td>
-          <td>${formatMoney(row.contrib, state.currency, state.language)}</td>
-          <td>${formatMoney(row.withdrawn, state.currency, state.language)}</td>
-          <td>${formatMoney(row.growth, state.currency, state.language)}</td>
-          <td>${formatMoney(row.end, state.currency, state.language)}</td>
+          <td>${moneyHtml(row.start, state.currency, state.language)}</td>
+          <td>${moneyHtml(row.contrib, state.currency, state.language)}</td>
+          <td>${moneyHtml(row.withdrawn, state.currency, state.language)}</td>
+          <td>${moneyHtml(row.growth, state.currency, state.language)}</td>
+          <td>${moneyHtml(row.end, state.currency, state.language)}</td>
         </tr>`;
       })
       .join("");
