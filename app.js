@@ -68,6 +68,10 @@
       unnamed: "이름 없는 시나리오",
       chartStart: "시작",
       yearLabel: (n) => `${n}년차`,
+      chartAssets: "자산",
+      chartContributed: "누적 납입",
+      chartGain: "누적 수익",
+      chartWithdrawn: "누적 인출",
     },
     en: {
       appTitle: "Snowball - Compound Interest Calculator",
@@ -113,6 +117,10 @@
       unnamed: "Untitled scenario",
       chartStart: "Start",
       yearLabel: (n) => `Year ${n}`,
+      chartAssets: "Balance",
+      chartContributed: "Contributed",
+      chartGain: "Gain",
+      chartWithdrawn: "Withdrawn",
     },
   };
 
@@ -511,16 +519,33 @@
     ctx.arc(x, y, 4.5, 0, Math.PI * 2);
     ctx.fill();
 
-    const caption = point.year === 0 ? t("chartStart") : t("yearLabel", point.year);
-    const text = `${caption}  ${formatMoney(point.value, state.currency, state.language)}`;
+    const hover = hoverTotals(result, state, point.year);
+    const money = (amount) => formatMoney(amount, state.currency, state.language);
+    const rows = [
+      { label: t("chartAssets"), value: money(hover.assets), color: "#e7c6ff" },
+      { label: t("chartContributed"), value: money(hover.contributed), color: "#f6ecff" },
+      {
+        label: t("chartGain"),
+        value: money(hover.gain),
+        color: hover.gain > 0 ? "#4fd1a5" : hover.gain < 0 ? "#f07178" : "#f6ecff",
+      },
+      { label: t("chartWithdrawn"), value: money(hover.withdrawn), color: "#f6ecff" },
+    ];
+    const title = point.year === 0 ? t("chartStart") : t("yearLabel", point.year);
     ctx.font = "600 13px Segoe UI, Apple SD Gothic Neo, sans-serif";
-    const boxPad = 8;
-    const boxW = ctx.measureText(text).width + boxPad * 2;
-    const boxH = 26;
+    const titleW = ctx.measureText(title).width;
+    ctx.font = "12px Segoe UI, Apple SD Gothic Neo, sans-serif";
+    const labelW = Math.max(...rows.map((row) => ctx.measureText(row.label).width));
+    const valueW = Math.max(...rows.map((row) => ctx.measureText(row.value).width));
+    const boxPad = 10;
+    const boxW = boxPad * 2 + Math.max(titleW, labelW + 18 + valueW);
+    const boxH = 16 + rows.length * 18 + 8;
     let boxX = x + 12;
     if (boxX + boxW > cssWidth - 6) boxX = x - boxW - 12;
-    let boxY = Math.max(6, y - boxH - 12);
-    if (boxY + boxH > padding.top + plotH) boxY = padding.top + 6;
+    if (boxX < 4) boxX = 4;
+    let boxY = y - boxH - 12;
+    if (boxY < 6) boxY = y + 14;
+    if (boxY + boxH > cssHeight - 6) boxY = Math.max(6, cssHeight - boxH - 6);
     ctx.fillStyle = "rgba(32, 20, 48, 0.95)";
     ctx.strokeStyle = "#c9a0e8";
     ctx.lineWidth = 1;
@@ -528,9 +553,46 @@
     ctx.roundRect(boxX, boxY, boxW, boxH, 6);
     ctx.fill();
     ctx.stroke();
+    ctx.font = "600 13px Segoe UI, Apple SD Gothic Neo, sans-serif";
     ctx.fillStyle = "#f6ecff";
-    ctx.fillText(text, boxX + boxPad, boxY + 17);
+    ctx.fillText(title, boxX + boxPad, boxY + 16);
+    ctx.font = "12px Segoe UI, Apple SD Gothic Neo, sans-serif";
+    rows.forEach((row, index) => {
+      const lineY = boxY + 34 + index * 18;
+      ctx.fillStyle = "#93a1b3";
+      ctx.fillText(row.label, boxX + boxPad, lineY);
+      drawMoneyText(ctx, row.value, boxX + boxW - boxPad - ctx.measureText(row.value).width, lineY, row.color);
+    });
     ctx.restore();
+  }
+
+  function hoverTotals(result, state, year) {
+    let contributed = state.initialBalance;
+    let withdrawn = 0;
+    if (year === 0) {
+      return { assets: state.initialBalance, contributed, withdrawn, gain: 0 };
+    }
+    result.years.forEach((row) => {
+      if (row.year > year) return;
+      contributed += row.contrib;
+      withdrawn += row.withdrawn;
+    });
+    const row = result.years.find((item) => item.year === year);
+    const assets = row ? row.end : state.initialBalance;
+    return { assets, contributed, withdrawn, gain: assets - contributed + withdrawn };
+  }
+
+  function drawMoneyText(ctx, text, x, y, numberColor) {
+    const parts = text.split(/(€|억|만원|원)/);
+    let cursor = x;
+    parts.forEach((part) => {
+      if (!part) return;
+      if (part === "억" || part === "€") ctx.fillStyle = "#ffd54a";
+      else if (part === "만원" || part === "원") ctx.fillStyle = "#f0a06a";
+      else ctx.fillStyle = numberColor;
+      ctx.fillText(part, cursor, y);
+      cursor += ctx.measureText(part).width;
+    });
   }
 
   function isAnchorMultiple(multiple) {
