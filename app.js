@@ -4,6 +4,13 @@
   const STORAGE_KEY = "snowball:v1";
   const SCENARIOS_KEY = "snowball:scenarios:v1";
 
+  const EXAMPLES = [
+    { id: "eur-200", currency: "EUR", monthlyContribution: 200, annualReturn: 6, labelKo: "월 €200 · 6%", labelEn: "€200/mo · 6%" },
+    { id: "eur-500", currency: "EUR", monthlyContribution: 500, annualReturn: 6, labelKo: "월 €500 · 6%", labelEn: "€500/mo · 6%" },
+    { id: "eur-1000", currency: "EUR", monthlyContribution: 1000, annualReturn: 6, labelKo: "월 €1,000 · 6%", labelEn: "€1,000/mo · 6%" },
+    { id: "krw-500000", currency: "KRW", monthlyContribution: 500000, annualReturn: 6, labelKo: "월 50만 원 · 6%", labelEn: "₩500,000/mo · 6%" },
+  ];
+
   const DEFAULTS = {
     language: "ko",
     currency: "EUR",
@@ -36,6 +43,8 @@
       monthlyWithdrawal: "월 인출액",
       annualWithdrawalPercent: "연 인출 비율 (%)",
       percentHint: "매년 초 잔액의 비율을 12개월로 나눠 인출합니다.",
+      examplesTitle: "공유 예시",
+      examplesHint: "예시를 누르면 주소가 바뀝니다. 그 주소를 보내면 같은 계산이 열립니다.",
       scenariosTitle: "시나리오 저장",
       scenarioName: "이름",
       save: "저장",
@@ -78,6 +87,8 @@
       monthlyWithdrawal: "Monthly withdrawal",
       annualWithdrawalPercent: "Annual withdrawal rate (%)",
       percentHint: "Each year, withdraw that percentage of the opening balance in 12 equal monthly parts.",
+      examplesTitle: "Shared examples",
+      examplesHint: "Choosing an example updates the address. Send that link to open the same calculation.",
       scenariosTitle: "Saved scenarios",
       scenarioName: "Name",
       save: "Save",
@@ -115,6 +126,7 @@
     fixedWithdrawalField: document.getElementById("fixedWithdrawalField"),
     percentWithdrawalField: document.getElementById("percentWithdrawalField"),
     scenarioName: document.getElementById("scenarioName"),
+    exampleList: document.getElementById("exampleList"),
     scenarioList: document.getElementById("scenarioList"),
     yearTableBody: document.querySelector("#yearTable tbody"),
     chart: document.getElementById("chart"),
@@ -470,6 +482,52 @@
     localStorage.setItem(SCENARIOS_KEY, JSON.stringify(list));
   }
 
+  function exampleState(example) {
+    return {
+      ...DEFAULTS,
+      language: els.language.value || DEFAULTS.language,
+      currency: example.currency,
+      initialBalance: 0,
+      monthlyContribution: example.monthlyContribution,
+      annualReturn: example.annualReturn,
+      years: 30,
+      withdrawalMode: "none",
+    };
+  }
+
+  function matchingExample(state) {
+    return EXAMPLES.find(
+      (example) =>
+        state.currency === example.currency &&
+        state.monthlyContribution === example.monthlyContribution &&
+        state.annualReturn === example.annualReturn &&
+        state.initialBalance === 0 &&
+        state.years === 30 &&
+        state.withdrawalMode === "none"
+    );
+  }
+
+  function syncExampleUrl(state) {
+    const match = matchingExample(state);
+    const url = new URL(window.location.href);
+    if (match) url.searchParams.set("e", match.id);
+    else url.searchParams.delete("e");
+    const next = `${url.pathname}${url.search}${url.hash}`;
+    const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (next !== current) window.history.replaceState(null, "", next);
+  }
+
+  function renderExamples() {
+    const state = readState();
+    const active = matchingExample(state);
+    const lang = els.language.value === "en" ? "en" : "ko";
+    els.exampleList.innerHTML = EXAMPLES.map((example) => {
+      const label = lang === "en" ? example.labelEn : example.labelKo;
+      const pressed = active && active.id === example.id ? "true" : "false";
+      return `<button type="button" class="btn example-btn${pressed === "true" ? " active" : ""}" data-example="${example.id}" aria-pressed="${pressed}">${escapeHtml(label)}</button>`;
+    }).join("");
+  }
+
   function renderScenarios() {
     const list = loadScenarios();
     if (!list.length) {
@@ -505,6 +563,8 @@
     updateCurrencySuffixes();
     render();
     persistCurrent();
+    syncExampleUrl(readState());
+    renderExamples();
     renderScenarios();
   }
 
@@ -527,6 +587,16 @@
 
     document.querySelectorAll('input[name="withdrawalMode"]').forEach((radio) => {
       radio.addEventListener("change", onInputChange);
+    });
+
+    els.exampleList.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-example]");
+      if (!button) return;
+      const example = EXAMPLES.find((item) => item.id === button.dataset.example);
+      if (!example) return;
+      writeState(exampleState(example));
+      syncExampleUrl(readState());
+      renderExamples();
     });
 
     els.resetDefaults.addEventListener("click", () => {
@@ -611,7 +681,16 @@
 
   function init() {
     bindEvents();
-    writeState(loadPersisted(), { skipPersist: true });
+    const requested = new URLSearchParams(window.location.search).get("e");
+    const example = EXAMPLES.find((item) => item.id === requested);
+    const saved = loadPersisted();
+    if (example) {
+      els.language.value = saved.language === "en" ? "en" : "ko";
+      writeState(exampleState(example));
+    } else {
+      writeState(saved, { skipPersist: true });
+    }
+    renderExamples();
     renderScenarios();
   }
 

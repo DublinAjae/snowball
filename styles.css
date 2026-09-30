@@ -409,6 +409,49 @@ tbody tr:hover td:first-child {
   background: #243041;
 }
 
+.examples {
+  margin-bottom: 1rem;
+}
+
+.examples-label {
+  margin: 0 0 0.45rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.example-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.example-btn.active {
+  border-color: var(--accent);
+  background: rgba(110, 200, 255, 0.12);
+}
+
+.social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0.35rem 0;
+}
+
+.social a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+}
+
+.social a:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+}
+
 .footer {
   margin-top: 1.75rem;
   color: var(--muted);
