@@ -8,7 +8,7 @@
     { id: "eur-200", currency: "EUR", monthlyContribution: 200, annualReturn: 6, labelKo: "월 €200 · 6%", labelEn: "€200/mo · 6%" },
     { id: "eur-500", currency: "EUR", monthlyContribution: 500, annualReturn: 6, labelKo: "월 €500 · 6%", labelEn: "€500/mo · 6%" },
     { id: "eur-1000", currency: "EUR", monthlyContribution: 1000, annualReturn: 6, labelKo: "월 €1,000 · 6%", labelEn: "€1,000/mo · 6%" },
-    { id: "krw-500000", currency: "KRW", monthlyContribution: 500000, annualReturn: 6, labelKo: "월 50만원 · 6%", labelEn: "50만원/mo · 6%" },
+    { id: "krw-500000", currency: "KRW", monthlyContribution: 500000, annualReturn: 6, labelKo: "월 50 만원 · 6%", labelEn: "50 만원/mo · 6%" },
   ];
 
   const DEFAULTS = {
@@ -303,10 +303,9 @@
     const man = Math.floor(abs / 10_000);
     const eok = Math.floor(man / 10_000);
     const rest = man % 10_000;
-    const parts = [];
-    if (eok) parts.push(`${eok.toLocaleString("ko-KR")}억`);
-    if (rest) parts.push(`${rest}만`);
-    return `${sign}${parts.join(" ")}원`;
+    if (eok && rest) return `${sign}${eok.toLocaleString("ko-KR")} 억 ${rest} 만원`;
+    if (eok) return `${sign}${eok.toLocaleString("ko-KR")} 억원`;
+    return `${sign}${rest.toLocaleString("ko-KR")} 만원`;
   }
 
   function formatMoney(amount, currency, language) {
@@ -454,10 +453,8 @@
   function compactMoney(amount, currency, language) {
     const locale = language === "ko" ? "ko-KR" : "en-IE";
     const symbol = currencySymbol(currency);
-    if (currency === "KRW") {
-      if (amount < 10_000) return `${Math.round(amount).toLocaleString(locale)}원`;
-      return formatKrw(amount).replace(/원$/, "");
-    } else if (amount >= 1_000_000) {
+    if (currency === "KRW") return formatKrw(amount);
+    else if (amount >= 1_000_000) {
       return `${symbol}${Number((amount / 1_000_000).toFixed(1))}M`;
     } else if (amount >= 1000) {
       return `${symbol}${Math.round(amount / 1000)}k`;
