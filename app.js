@@ -66,6 +66,7 @@
       remove: "삭제",
       emptyScenarios: "저장된 시나리오가 없습니다.",
       unnamed: "이름 없는 시나리오",
+      chartStart: "시작",
       yearLabel: (n) => `${n}년차`,
       periodLabel: (n) => `${n}년`,
     },
@@ -111,6 +112,7 @@
       remove: "Delete",
       emptyScenarios: "No saved scenarios yet.",
       unnamed: "Untitled scenario",
+      chartStart: "Start",
       yearLabel: (n) => `Year ${n}`,
       periodLabel: (n) => `${n} years`,
     },
@@ -369,8 +371,8 @@
           <td>${t("yearLabel", row.year)}</td>
           <td>${moneyHtml(row.start, state.currency, state.language)}</td>
           <td>${moneyHtml(row.contrib, state.currency, state.language)}</td>
-          <td>${moneyHtml(row.withdrawn, state.currency, state.language)}</td>
           <td class="${row.growth > 0 ? "num-up" : row.growth < 0 ? "num-down" : ""}">${moneyHtml(row.growth, state.currency, state.language)}</td>
+          <td>${moneyHtml(row.withdrawn, state.currency, state.language)}</td>
           <td class="col-end">${moneyHtml(row.end, state.currency, state.language)}</td>
         </tr>`;
       })
@@ -378,7 +380,9 @@
     els.yearTableBody.innerHTML = rows;
   }
 
-  function drawChart(result, state) {
+  let chartModel = null;
+
+  function drawChart(result, state, hoverYear = null) {
     const canvas = els.chart;
     const dpr = window.devicePixelRatio || 1;
     const cssWidth = canvas.clientWidth || 800;
@@ -454,6 +458,62 @@
     for (let year = 0; year <= state.years; year += labelStep) {
       ctx.fillText(String(year), xAt(year) - 4, cssHeight - 12);
     }
+
+    chartModel = { result, state, points, xAt, cssWidth };
+
+    if (hoverYear == null) return;
+    const point = points.find((item) => item.year === hoverYear);
+    if (!point) return;
+
+    const x = xAt(point.year);
+    const y = yAt(point.value);
+    ctx.save();
+    ctx.strokeStyle = "rgba(231, 198, 255, 0.9)";
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(x, padding.top);
+    ctx.lineTo(x, padding.top + plotH);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = "#e7c6ff";
+    ctx.beginPath();
+    ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    const caption = point.year === 0 ? t("chartStart") : t("yearLabel", point.year);
+    const text = `${caption}  ${formatMoney(point.value, state.currency, state.language)}`;
+    ctx.font = "600 13px Segoe UI, Apple SD Gothic Neo, sans-serif";
+    const boxPad = 8;
+    const boxW = ctx.measureText(text).width + boxPad * 2;
+    const boxH = 26;
+    let boxX = x + 12;
+    if (boxX + boxW > cssWidth - 6) boxX = x - boxW - 12;
+    let boxY = Math.max(6, y - boxH - 12);
+    if (boxY + boxH > padding.top + plotH) boxY = padding.top + 6;
+    ctx.fillStyle = "rgba(32, 20, 48, 0.95)";
+    ctx.strokeStyle = "#c9a0e8";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(boxX, boxY, boxW, boxH, 6);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#f6ecff";
+    ctx.fillText(text, boxX + boxPad, boxY + 17);
+    ctx.restore();
+  }
+
+  function hoverYearAt(offsetX) {
+    if (!chartModel) return null;
+    let nearest = chartModel.points[0];
+    let nearestDistance = Infinity;
+    chartModel.points.forEach((point) => {
+      const distance = Math.abs(chartModel.xAt(point.year) - offsetX);
+      if (distance < nearestDistance) {
+        nearest = point;
+        nearestDistance = distance;
+      }
+    });
+    return nearest.year;
   }
 
   function niceStep(raw) {
@@ -700,6 +760,15 @@
       } finally {
         els.importJson.value = "";
       }
+    });
+
+    els.chart.addEventListener("pointermove", (event) => {
+      if (!chartModel) return;
+      drawChart(chartModel.result, chartModel.state, hoverYearAt(event.offsetX));
+    });
+    els.chart.addEventListener("pointerleave", () => {
+      if (!chartModel) return;
+      drawChart(chartModel.result, chartModel.state, null);
     });
 
     window.addEventListener("resize", () => {
