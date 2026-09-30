@@ -546,7 +546,7 @@
     let boxY = y - boxH - 12;
     if (boxY < 6) boxY = y + 14;
     if (boxY + boxH > cssHeight - 6) boxY = Math.max(6, cssHeight - boxH - 6);
-    ctx.fillStyle = "rgba(32, 20, 48, 0.95)";
+    ctx.fillStyle = "#201430";
     ctx.strokeStyle = "#c9a0e8";
     ctx.lineWidth = 1;
     ctx.beginPath();
