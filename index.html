@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Snowball — retirement & dollar-cost averaging calculator" />
+  <title>눈덩이 · Snowball</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄</text></svg>" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">❄</span>
+        <div>
+          <h1 data-i18n="appTitle">눈덩이</h1>
+          <p class="tagline" data-i18n="tagline">적립하고, 인출하며, 해마다 불어나는 자산</p>
+        </div>
+      </div>
+      <div class="header-controls">
+        <label class="chip">
+          <span data-i18n="language">언어</span>
+          <select id="language" aria-label="Language">
+            <option value="ko">한국어</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+        <label class="chip">
+          <span data-i18n="currency">통화</span>
+          <select id="currency" aria-label="Currency">
+            <option value="EUR">EUR €</option>
+            <option value="KRW">KRW ₩</option>
+          </select>
+        </label>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel inputs" aria-labelledby="inputs-heading">
+        <div class="panel-head">
+          <h2 id="inputs-heading" data-i18n="inputsTitle">설정</h2>
+          <button type="button" id="resetDefaults" class="btn ghost" data-i18n="reset">기본값</button>
+        </div>
+
+        <div class="field">
+          <label for="initialBalance" data-i18n="initialBalance">기초 자금</label>
+          <div class="input-with-suffix">
+            <input id="initialBalance" type="number" min="0" step="any" inputmode="decimal" />
+            <span class="suffix currency-suffix">€</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="monthlyContribution" data-i18n="monthlyContribution">월 적립액</label>
+          <div class="input-with-suffix">
+            <input id="monthlyContribution" type="number" min="0" step="any" inputmode="decimal" />
+            <span class="suffix currency-suffix">€</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="annualReturn" data-i18n="annualReturn">연평균 수익률 (%)</label>
+          <div class="input-with-suffix">
+            <input id="annualReturn" type="number" step="0.1" inputmode="decimal" />
+            <span class="suffix">%</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="years" data-i18n="years">기간 (년)</label>
+          <div class="input-with-suffix">
+            <input id="years" type="number" min="1" max="80" step="1" inputmode="numeric" />
+            <span class="suffix" data-i18n="yearsUnit">년</span>
+          </div>
+        </div>
+
+        <fieldset class="fieldset">
+          <legend data-i18n="withdrawalTitle">인출 옵션</legend>
+          <div class="radio-row">
+            <label>
+              <input type="radio" name="withdrawalMode" value="none" checked />
+              <span data-i18n="withdrawalNone">인출 없음</span>
+            </label>
+            <label>
+              <input type="radio" name="withdrawalMode" value="fixed" />
+              <span data-i18n="withdrawalFixed">월 고정 금액</span>
+            </label>
+            <label>
+              <input type="radio" name="withdrawalMode" value="percent" />
+              <span data-i18n="withdrawalPercent">연 비율</span>
+            </label>
+          </div>
+
+          <div class="field withdrawal-field" id="fixedWithdrawalField" hidden>
+            <label for="monthlyWithdrawal" data-i18n="monthlyWithdrawal">월 인출액</label>
+            <div class="input-with-suffix">
+              <input id="monthlyWithdrawal" type="number" min="0" step="any" inputmode="decimal" />
+              <span class="suffix currency-suffix">€</span>
+            </div>
+          </div>
+
+          <div class="field withdrawal-field" id="percentWithdrawalField" hidden>
+            <label for="annualWithdrawalPercent" data-i18n="annualWithdrawalPercent">연 인출 비율 (%)</label>
+            <div class="input-with-suffix">
+              <input id="annualWithdrawalPercent" type="number" min="0" max="100" step="0.1" inputmode="decimal" />
+              <span class="suffix">%</span>
+            </div>
+            <p class="hint" data-i18n="percentHint">매년 초 잔액의 비율을 12개월로 나눠 인출합니다.</p>
+          </div>
+        </fieldset>
+
+        <fieldset class="fieldset scenarios">
+          <legend data-i18n="scenariosTitle">시나리오 저장</legend>
+          <div class="field">
+            <label for="scenarioName" data-i18n="scenarioName">이름</label>
+            <input id="scenarioName" type="text" maxlength="60" placeholder="예: 월 200€ · 7%" />
+          </div>
+          <div class="btn-row">
+            <button type="button" id="saveScenario" class="btn primary" data-i18n="save">저장</button>
+            <button type="button" id="exportJson" class="btn" data-i18n="export">내보내기</button>
+            <label class="btn file-btn">
+              <span data-i18n="import">불러오기</span>
+              <input id="importJson" type="file" accept="application/json,.json" hidden />
+            </label>
+          </div>
+          <ul id="scenarioList" class="scenario-list" aria-live="polite"></ul>
+        </fieldset>
+      </section>
+
+      <section class="panel results" aria-labelledby="results-heading">
+        <div class="panel-head">
+          <h2 id="results-heading" data-i18n="resultsTitle">결과</h2>
+        </div>
+
+        <div class="summary" id="summary">
+          <article class="stat">
+            <h3 data-i18n="finalBalance">최종 자산</h3>
+            <p class="stat-value" id="finalBalance">—</p>
+          </article>
+          <article class="stat">
+            <h3 data-i18n="totalContributed">총 납입</h3>
+            <p class="stat-value" id="totalContributed">—</p>
+          </article>
+          <article class="stat">
+            <h3 data-i18n="totalWithdrawn">총 인출</h3>
+            <p class="stat-value" id="totalWithdrawn">—</p>
+          </article>
+          <article class="stat">
+            <h3 data-i18n="gain">투자 손익</h3>
+            <p class="stat-value" id="gain">—</p>
+          </article>
+        </div>
+
+        <div class="chart-wrap">
+          <canvas id="chart" width="800" height="320" role="img" aria-label="Asset growth chart"></canvas>
+        </div>
+
+        <div class="table-wrap">
+          <table id="yearTable">
+            <thead>
+              <tr>
+                <th data-i18n="colYear">연도</th>
+                <th data-i18n="colStart">연초</th>
+                <th data-i18n="colContrib">납입</th>
+                <th data-i18n="colWithdraw">인출</th>
+                <th data-i18n="colGrowth">수익</th>
+                <th data-i18n="colEnd">연말</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p data-i18n="disclaimer">교육·참고용 계산기입니다. 세금, 수수료, 인플레이션은 반영하지 않습니다.</p>
+      <p><a href="https://github.com/DublinAjae/snowball" target="_blank" rel="noopener">DublinAjae / snowball</a></p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
