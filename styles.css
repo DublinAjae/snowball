@@ -339,14 +339,6 @@ button,
   word-break: break-word;
 }
 
-.result-years {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #e7c6ff;
-  font-variant-numeric: tabular-nums;
-}
-
 .stat-final {
   background: rgba(126, 74, 176, 0.38);
   border-color: #c9a0e8;

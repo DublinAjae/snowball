@@ -25,7 +25,7 @@
 
   const I18N = {
     ko: {
-      appTitle: "눈덩이 - 파이어 계산기",
+      appTitle: "눈덩이 - 복리 계산기",
       tagline: "적립하고, 인출하며, 해마다 불어나는 자산",
       language: "언어",
       currency: "통화",
@@ -50,7 +50,7 @@
       save: "저장",
       export: "내보내기",
       import: "불러오기",
-      resultsTitle: "결과",
+      resultsTitle: (n) => `결과 (${n}년)`,
       finalBalance: "최종 자산",
       totalContributed: "총 납입",
       totalWithdrawn: "총 인출",
@@ -68,10 +68,9 @@
       unnamed: "이름 없는 시나리오",
       chartStart: "시작",
       yearLabel: (n) => `${n}년차`,
-      periodLabel: (n) => `${n}년`,
     },
     en: {
-      appTitle: "Snowball - FIRE Calculator",
+      appTitle: "Snowball - Compound Interest Calculator",
       tagline: "Contribute, withdraw, and watch wealth grow year by year",
       language: "Language",
       currency: "Currency",
@@ -96,7 +95,7 @@
       save: "Save",
       export: "Export",
       import: "Import",
-      resultsTitle: "Results",
+      resultsTitle: (n) => `Results (${n} years)`,
       finalBalance: "Final balance",
       totalContributed: "Total contributed",
       totalWithdrawn: "Total withdrawn",
@@ -114,7 +113,6 @@
       unnamed: "Untitled scenario",
       chartStart: "Start",
       yearLabel: (n) => `Year ${n}`,
-      periodLabel: (n) => `${n} years`,
     },
   };
 
@@ -134,7 +132,7 @@
     scenarioList: document.getElementById("scenarioList"),
     yearTableBody: document.querySelector("#yearTable tbody"),
     chart: document.getElementById("chart"),
-    resultYears: document.getElementById("resultYears"),
+    resultsHeading: document.getElementById("results-heading"),
     finalBalance: document.getElementById("finalBalance"),
     totalContributed: document.getElementById("totalContributed"),
     totalWithdrawn: document.getElementById("totalWithdrawn"),
@@ -343,7 +341,7 @@
   }
 
   function renderSummary(result, state) {
-    els.resultYears.textContent = t("periodLabel", state.years);
+    els.resultsHeading.textContent = t("resultsTitle", state.years);
     els.finalBalance.innerHTML = moneyHtml(
       result.finalBalance,
       state.currency,

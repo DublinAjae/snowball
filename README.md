@@ -1,4 +1,4 @@
-# 눈덩이 - 파이어 계산기 / Snowball - FIRE Calculator
+# 눈덩이 - 복리 계산기 / Snowball - Compound Interest Calculator
 
 Retirement and dollar-cost averaging calculator.
 
