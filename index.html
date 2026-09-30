@@ -52,7 +52,7 @@
         <div class="field">
           <label for="initialBalance" data-i18n="initialBalance">기초 자금</label>
           <div class="input-with-suffix">
-            <input id="initialBalance" type="number" min="0" step="any" inputmode="decimal" />
+            <input id="initialBalance" type="text" inputmode="numeric" autocomplete="off" />
             <span class="suffix currency-suffix">€</span>
           </div>
         </div>
@@ -60,7 +60,7 @@
         <div class="field">
           <label for="monthlyContribution" data-i18n="monthlyContribution">월 적립액</label>
           <div class="input-with-suffix">
-            <input id="monthlyContribution" type="number" min="0" step="any" inputmode="decimal" />
+            <input id="monthlyContribution" type="text" inputmode="numeric" autocomplete="off" />
             <span class="suffix currency-suffix">€</span>
           </div>
         </div>
@@ -205,6 +205,6 @@
     </footer>
   </div>
 
-  <script src="app.js?v=16"></script>
+  <script src="app.js?v=17"></script>
 </body>
 </html>

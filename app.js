@@ -177,6 +177,37 @@
     return Number.isFinite(value) ? value : fallback;
   }
 
+  function parseMoney(value) {
+    const digits = String(value ?? "").replace(/[^\d]/g, "");
+    if (!digits) return 0;
+    const amount = Number(digits);
+    return Number.isFinite(amount) ? amount : 0;
+  }
+
+  function formatGrouped(value) {
+    const digits = String(value ?? "").replace(/[^\d]/g, "");
+    if (!digits) return "";
+    return Number(digits).toLocaleString("en-US");
+  }
+
+  function formatMoneyField(el) {
+    const caret = el.selectionStart ?? el.value.length;
+    const digitsBefore = el.value.slice(0, caret).replace(/[^\d]/g, "").length;
+    const formatted = formatGrouped(el.value);
+    if (el.value === formatted) return;
+    el.value = formatted;
+    let seen = 0;
+    let next = formatted.length;
+    for (let i = 0; i < formatted.length; i += 1) {
+      if (/\d/.test(formatted[i])) seen += 1;
+      if (seen >= digitsBefore) {
+        next = i + 1;
+        break;
+      }
+    }
+    if (document.activeElement === el) el.setSelectionRange(next, next);
+  }
+
   function clampYears(years) {
     return Math.min(80, Math.max(1, Math.round(years) || 1));
   }
@@ -188,8 +219,8 @@
     return {
       language: els.language.value,
       currency: els.currency.value,
-      initialBalance: Math.max(0, num(els.initialBalance)),
-      monthlyContribution: Math.max(0, num(els.monthlyContribution)),
+      initialBalance: parseMoney(els.initialBalance.value),
+      monthlyContribution: parseMoney(els.monthlyContribution.value),
       annualReturn: num(els.annualReturn),
       years: clampYears(num(els.years, 30)),
       withdrawalMode: mode,
@@ -201,8 +232,8 @@
   function writeState(state, { skipPersist = false } = {}) {
     els.language.value = state.language === "en" ? "en" : "ko";
     els.currency.value = state.currency === "KRW" ? "KRW" : "EUR";
-    els.initialBalance.value = state.initialBalance;
-    els.monthlyContribution.value = state.monthlyContribution;
+    els.initialBalance.value = formatGrouped(state.initialBalance);
+    els.monthlyContribution.value = formatGrouped(state.monthlyContribution);
     els.annualReturn.value = state.annualReturn;
     els.years.value = state.years;
     els.monthlyWithdrawal.value = state.monthlyWithdrawal;
@@ -644,7 +675,10 @@
       .replaceAll('"', "&quot;");
   }
 
-  function onInputChange() {
+  function onInputChange(event) {
+    if (event?.target === els.initialBalance || event?.target === els.monthlyContribution) {
+      formatMoneyField(event.target);
+    }
     syncWithdrawalFields();
     applyI18n();
     updateCurrencySuffixes();
