@@ -331,7 +331,10 @@
   function moneyHtml(amount, currency, language) {
     return escapeHtml(formatMoney(amount, currency, language)).replace(
       /(€|억|만원|원)/g,
-      '<span class="unit">$1</span>'
+      (token) => {
+        const kind = token === "억" || token === "€" ? "unit-eok" : "unit-man";
+        return `<span class="unit ${kind}">${token}</span>`;
+      }
     );
   }
 
@@ -364,7 +367,7 @@
           <td>${moneyHtml(row.start, state.currency, state.language)}</td>
           <td>${moneyHtml(row.contrib, state.currency, state.language)}</td>
           <td>${moneyHtml(row.withdrawn, state.currency, state.language)}</td>
-          <td>${moneyHtml(row.growth, state.currency, state.language)}</td>
+          <td class="${row.growth > 0 ? "num-up" : row.growth < 0 ? "num-down" : ""}">${moneyHtml(row.growth, state.currency, state.language)}</td>
           <td>${moneyHtml(row.end, state.currency, state.language)}</td>
         </tr>`;
       })

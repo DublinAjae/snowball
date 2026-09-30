@@ -9,7 +9,8 @@
   --accent-strong: #3aa8ef;
   --good: #4fd1a5;
   --warn: #f0b35a;
-  --unit: #ffd54a;
+  --unit-eok: #ffd54a;
+  --unit-man: #f0a06a;
   --danger: #f07178;
   --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   --radius: 16px;
@@ -366,8 +367,20 @@ button,
   border-radius: 12px;
 }
 
-.unit {
-  color: var(--unit);
+.unit-eok {
+  color: var(--unit-eok);
+}
+
+.unit-man {
+  color: var(--unit-man);
+}
+
+td.num-up {
+  color: var(--good);
+}
+
+td.num-down {
+  color: var(--danger);
 }
 
 table {
