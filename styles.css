@@ -145,6 +145,11 @@ button,
   margin-bottom: 0.9rem;
 }
 
+.field[hidden],
+.withdrawal-field[hidden] {
+  display: none !important;
+}
+
 .field label {
   color: var(--muted);
   font-size: 0.88rem;

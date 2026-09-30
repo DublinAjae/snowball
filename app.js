@@ -137,7 +137,8 @@
 
   function applyI18n() {
     document.documentElement.lang = els.language.value;
-    document.title = `${t("appTitle")} · Snowball`;
+    document.title =
+      els.language.value === "ko" ? "눈덩이 · Snowball" : "Snowball · 눈덩이";
     document.querySelectorAll("[data-i18n]").forEach((node) => {
       const key = node.getAttribute("data-i18n");
       node.textContent = t(key);
