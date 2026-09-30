@@ -378,12 +378,15 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, cssWidth, cssHeight);
 
-    const padding = { top: 24, right: 18, bottom: 36, left: 64 };
+    const padding = { top: 24, right: 18, bottom: 36, left: state.currency === "KRW" ? 80 : 64 };
     const plotW = cssWidth - padding.left - padding.right;
     const plotH = cssHeight - padding.top - padding.bottom;
 
     const points = [{ year: 0, value: state.initialBalance }, ...result.years.map((y) => ({ year: y.year, value: y.end }))];
-    const maxValue = Math.max(...points.map((p) => p.value), 1);
+    const rawMax = Math.max(...points.map((p) => p.value), 1);
+    const step = niceStep(rawMax / 4);
+    const ticks = Math.max(1, Math.ceil(rawMax / step));
+    const maxValue = step * ticks;
     const minValue = 0;
 
     ctx.strokeStyle = "rgba(147, 161, 179, 0.25)";
@@ -391,10 +394,9 @@
     ctx.font = "12px Segoe UI, Apple SD Gothic Neo, sans-serif";
     ctx.lineWidth = 1;
 
-    const ticks = 4;
     for (let i = 0; i <= ticks; i += 1) {
       const y = padding.top + (plotH * i) / ticks;
-      const value = maxValue - ((maxValue - minValue) * i) / ticks;
+      const value = maxValue - step * i;
       ctx.beginPath();
       ctx.moveTo(padding.left, y);
       ctx.lineTo(padding.left + plotW, y);
@@ -442,19 +444,21 @@
     }
   }
 
+  function niceStep(raw) {
+    const power = Math.pow(10, Math.floor(Math.log10(raw)));
+    const scaled = raw / power;
+    const nice = scaled <= 1 ? 1 : scaled <= 2 ? 2 : scaled <= 5 ? 5 : 10;
+    return nice * power;
+  }
+
   function compactMoney(amount, currency, language) {
     const locale = language === "ko" ? "ko-KR" : "en-IE";
     const symbol = currencySymbol(currency);
     if (currency === "KRW") {
-      if (amount >= 100_000_000) {
-        return `${Math.round(amount / 100_000_000)}억`;
-      }
-      if (amount >= 10_000) {
-        return `${Math.round(amount / 10_000)}만`;
-      }
-      return `${Math.round(amount).toLocaleString(locale)}원`;
+      if (amount < 10_000) return `${Math.round(amount).toLocaleString(locale)}원`;
+      return formatKrw(amount).replace(/원$/, "");
     } else if (amount >= 1_000_000) {
-      return `${symbol}${Math.round(amount / 1_000_000)}M`;
+      return `${symbol}${Number((amount / 1_000_000).toFixed(1))}M`;
     } else if (amount >= 1000) {
       return `${symbol}${Math.round(amount / 1000)}k`;
     }
