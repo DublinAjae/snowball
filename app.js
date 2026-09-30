@@ -876,13 +876,13 @@
     if (currency === "KRW") {
       if (basis >= 100_000_000) return 10_000_000;
       if (basis >= 10_000_000) return 1_000_000;
-      if (basis >= 1_000_000) return 100_000;
+      if (basis >= 100_000) return 100_000;
       return 10_000;
     }
-    if (basis >= 100_000) return 10_000;
     if (basis >= 10_000) return 1_000;
     if (basis >= 1_000) return 100;
-    return 50;
+    if (basis >= 100) return 50;
+    return 10;
   }
 
   function roundTenth(value) {
