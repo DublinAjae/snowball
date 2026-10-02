@@ -241,10 +241,34 @@ const english = index
   .replace(">수익<", ">Growth<")
   .replace(">인출<", ">Out<")
   .replace(">연말<", ">End<")
+  .replace(">SCHD 자산<", ">SCHD assets<")
+  .replace(">현금 배당<", ">Cash dividends<")
+  .replace(">현금 배당<", ">Cash dividends<")
+  .replace(">복리와 차이<", ">Versus compound<")
   .replace(">이 계산기는 이렇게 움직입니다<", ">How this calculator works<")
   .replace(
-    ">기초 자금, 매달 넣는 돈, 연 수익률, 기간을 넣으면 해마다 붙는 수익과 연말 자산이 표와 그래프에 나옵니다. 입력한 연 수익률이 1년 내내 일정하다고 보고, 그 이자를 매달 같은 속도로 나눕니다. 세금, 수수료, 물가 상승은 빼지 않습니다.<",
-    ">Enter a starting balance, a monthly amount, an annual return, and a time span. The table and chart show each year's growth and the balance at year end. The annual return you enter is treated as steady, and that interest is applied evenly each month. Taxes, fees, and inflation are left out.<"
+    ">기초 자금, 매달 넣는 돈, 연 수익률, 기간을 넣으면 해마다 붙는 수익과 연말 자산이 표와 그래프에 나옵니다. 입력한 연 수익률이 1년 내내 일정하다고 보고, 그 이자를 매달 같은 속도로 나눕니다. 같은 납입으로 SCHD도 나란히 계산합니다. 배당률, 가격 상승, 배당 성장은 장기 평균이 기본값이고, 배당은 전액 또는 일부만 다시 살 수 있습니다. 세금, 수수료, 물가 상승은 빼지 않습니다.<",
+    ">Enter a starting balance, a monthly amount, an annual return, and a time span. The table and chart show each year's growth and the balance at year end. The annual return you enter is treated as steady, and that interest is applied evenly each month. The same contributions are also run for SCHD. Dividend yield, price growth, and dividend growth start from long-run averages, and you can reinvest all, a fixed amount, or a percentage of each dividend. Taxes, fees, and inflation are left out.<"
+  )
+  .replace(
+    ">배당률 3.1%는 슈왑 분배수익률(2026년 7월 31일, 3.13%)을 반올림한 값입니다. 배당 성장률 11%는 2012–2025년 연간 배당이 늘어난 속도(CAGR 10.99%)입니다. 가격 상승률 10%는 설정 이후 총수익 연 13.42%에서 배당을 뺀 시세 상승 추정치입니다.<",
+    ">The 3.1% yield is Schwab’s distribution yield as of 31 July 2026 (3.13%), rounded. The 11% dividend growth is the 2012–2025 dividend CAGR (10.99%). The 10% price growth is an estimate of price appreciation after taking the dividend out of the 13.42% annualized total return since inception.<"
+  )
+  .replace(">연간 배당률 (%)<", ">Annual dividend yield (%)<")
+  .replace(">연간 가격 상승률 (%)<", ">Annual price growth (%)<")
+  .replace(">연간 배당 성장률 (%)<", ">Annual dividend growth (%)<")
+  .replace(">배당 전액 재투자<", ">Reinvest all dividends<")
+  .replace(">일정 금액만 재투자<", ">Reinvest a fixed amount<")
+  .replace(">일정 비율만 재투자<", ">Reinvest a percentage<")
+  .replace(">월 재투자액<", ">Monthly reinvestment<")
+  .replace(
+    ">이번 달 배당 가운데 이 금액만 다시 삽니다. 배당이 더 적으면 전액을 재투자합니다.<",
+    ">Only this much of the month’s dividend is used to buy more shares. If the dividend is smaller, all of it is reinvested.<"
+  )
+  .replace(">재투자 비율 (%)<", ">Reinvestment share (%)<")
+  .replace(
+    ">이번 달 배당의 이 비율만 다시 사고, 나머지는 현금으로 쌓입니다.<",
+    ">This share of each month’s dividend buys more shares. The rest is kept as cash.<"
   )
   .replace(">많이 찾는 적립식 계산<", ">Calculations people look up<")
   .replace(">교육·참고용 계산기입니다. 세금, 수수료, 인플레이션은 반영하지 않습니다.<", ">For education and planning only. Taxes, fees, and inflation are not included.<");

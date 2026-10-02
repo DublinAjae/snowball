@@ -396,6 +396,20 @@ input[type="number"]::-webkit-inner-spin-button {
   font-size: 1.35rem;
 }
 
+.summary-schd {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.stat-schd {
+  background: rgba(255, 213, 74, 0.14);
+  border-color: #d4a017;
+}
+
+.stat-schd .stat-value {
+  color: #ffd54a;
+  font-size: 1.35rem;
+}
+
 .stat-value.positive {
   color: var(--good);
 }
@@ -496,6 +510,19 @@ thead th.col-end {
 
 tbody tr:hover td.col-end {
   background: rgba(126, 74, 176, 0.5);
+}
+
+th.col-schd,
+td.col-schd {
+  background: rgba(255, 213, 74, 0.12);
+}
+
+thead th.col-schd {
+  background: #3d3420;
+}
+
+tbody tr:hover td.col-schd {
+  background: rgba(255, 213, 74, 0.22);
 }
 
 .examples {

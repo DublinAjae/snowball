@@ -32,7 +32,7 @@
     "description": "Calculate the balance after 10, 20, or 30 years of monthly contributions."
   }
   </script>
-  <link rel="stylesheet" href="../styles.css?v=19" />
+  <link rel="stylesheet" href="../styles.css?v=20" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄</text></svg>" />
 </head>
 <body>
@@ -167,6 +167,82 @@
           </div>
         </fieldset>
 
+        <fieldset class="fieldset">
+          <legend>SCHD</legend>
+          <p class="hint" data-i18n="schdHint">The 3.1% yield is Schwab’s distribution yield as of 31 July 2026 (3.13%), rounded. The 11% dividend growth is the 2012–2025 dividend CAGR (10.99%). The 10% price growth is an estimate of price appreciation after taking the dividend out of the 13.42% annualized total return since inception.</p>
+          <div class="field">
+            <label for="schdYield" data-i18n="schdYield">Annual dividend yield (%)</label>
+            <div class="stepper">
+              <button type="button" class="step-btn" data-nudge="down" aria-label="Decrease">−</button>
+              <div class="input-with-suffix">
+                <input id="schdYield" type="number" step="0.1" inputmode="decimal" />
+                <span class="suffix">%</span>
+              </div>
+              <button type="button" class="step-btn" data-nudge="up" aria-label="Increase">+</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="schdPriceGrowth" data-i18n="schdPriceGrowth">Annual price growth (%)</label>
+            <div class="stepper">
+              <button type="button" class="step-btn" data-nudge="down" aria-label="Decrease">−</button>
+              <div class="input-with-suffix">
+                <input id="schdPriceGrowth" type="number" step="0.1" inputmode="decimal" />
+                <span class="suffix">%</span>
+              </div>
+              <button type="button" class="step-btn" data-nudge="up" aria-label="Increase">+</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="schdDividendGrowth" data-i18n="schdDividendGrowth">Annual dividend growth (%)</label>
+            <div class="stepper">
+              <button type="button" class="step-btn" data-nudge="down" aria-label="Decrease">−</button>
+              <div class="input-with-suffix">
+                <input id="schdDividendGrowth" type="number" step="0.1" inputmode="decimal" />
+                <span class="suffix">%</span>
+              </div>
+              <button type="button" class="step-btn" data-nudge="up" aria-label="Increase">+</button>
+            </div>
+          </div>
+          <div class="radio-row">
+            <label>
+              <input type="radio" name="schdReinvest" value="all" checked />
+              <span data-i18n="schdReinvestAll">Reinvest all dividends</span>
+            </label>
+            <label>
+              <input type="radio" name="schdReinvest" value="amount" />
+              <span data-i18n="schdReinvestAmountMode">Reinvest a fixed amount</span>
+            </label>
+            <label>
+              <input type="radio" name="schdReinvest" value="percent" />
+              <span data-i18n="schdReinvestPercentMode">Reinvest a percentage</span>
+            </label>
+          </div>
+          <div class="field withdrawal-field" id="schdAmountField" hidden>
+            <label for="schdReinvestAmount" data-i18n="schdReinvestAmount">Monthly reinvestment</label>
+            <div class="stepper">
+              <button type="button" class="step-btn" data-nudge="down" aria-label="Decrease">−</button>
+              <div class="input-with-suffix">
+                <input id="schdReinvestAmount" type="text" inputmode="numeric" autocomplete="off" />
+                <span class="suffix currency-suffix">€</span>
+              </div>
+              <button type="button" class="step-btn" data-nudge="up" aria-label="Increase">+</button>
+            </div>
+            <p class="hint" data-i18n="schdAmountHint">Only this much of the month’s dividend is used to buy more shares. If the dividend is smaller, all of it is reinvested.</p>
+          </div>
+          <div class="field withdrawal-field" id="schdPercentField" hidden>
+            <label for="schdReinvestPercent" data-i18n="schdReinvestPercent">Reinvestment share (%)</label>
+            <div class="stepper">
+              <button type="button" class="step-btn" data-nudge="down" aria-label="Decrease">−</button>
+              <div class="input-with-suffix">
+                <input id="schdReinvestPercent" type="number" min="0" max="100" step="5" inputmode="decimal" />
+                <span class="suffix">%</span>
+              </div>
+              <button type="button" class="step-btn" data-nudge="up" aria-label="Increase">+</button>
+            </div>
+            <p class="hint" data-i18n="schdPercentHint">This share of each month’s dividend buys more shares. The rest is kept as cash.</p>
+          </div>
+        </fieldset>
+
         <fieldset class="fieldset scenarios">
           <legend data-i18n="scenariosTitle">Saved scenarios</legend>
           <div class="field">
@@ -209,6 +285,21 @@
           </article>
         </div>
 
+        <div class="summary summary-schd">
+          <article class="stat stat-schd">
+            <h3 data-i18n="schdTotal">SCHD assets</h3>
+            <p class="stat-value" id="schdTotal">—</p>
+          </article>
+          <article class="stat">
+            <h3 data-i18n="schdCash">Cash dividends</h3>
+            <p class="stat-value" id="schdCash">—</p>
+          </article>
+          <article class="stat">
+            <h3 data-i18n="schdGap">Versus compound</h3>
+            <p class="stat-value" id="schdGap">—</p>
+          </article>
+        </div>
+
         <div class="chart-wrap">
           <canvas id="chart" width="800" height="320" role="img" aria-label="Asset growth chart"></canvas>
         </div>
@@ -223,6 +314,8 @@
                 <th data-i18n="colGrowth">Growth</th>
                 <th data-i18n="colWithdraw">Out</th>
                 <th class="col-end" data-i18n="colEnd">End</th>
+                <th class="col-schd" data-i18n="colSchd">SCHD</th>
+                <th data-i18n="colDividendCash">Cash dividends</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -233,7 +326,7 @@
 
     <section class="seo-note" aria-labelledby="about-heading">
       <h2 id="about-heading" data-i18n="aboutTitle">How this calculator works</h2>
-      <p data-i18n="aboutBody">Enter a starting balance, a monthly amount, an annual return, and a time span. The table and chart show each year's growth and the balance at year end. The annual return you enter is treated as steady, and that interest is applied evenly each month. Taxes, fees, and inflation are left out.</p>
+      <p data-i18n="aboutBody">Enter a starting balance, a monthly amount, an annual return, and a time span. The table and chart show each year's growth and the balance at year end. The annual return you enter is treated as steady, and that interest is applied evenly each month. The same contributions are also run for SCHD. Dividend yield, price growth, and dividend growth start from long-run averages, and you can reinvest all, a fixed amount, or a percentage of each dividend. Taxes, fees, and inflation are left out.</p>
       <h2 data-i18n="guidesTitle">Calculations people look up</h2>
       <p>These walkthroughs are in Korean. Each link opens the calculator with that monthly amount, return, and time span filled in.</p>
       <ul class="guide-links">
@@ -273,6 +366,6 @@
     </footer>
   </div>
 
-  <script src="../app.js?v=27"></script>
+  <script src="../app.js?v=28"></script>
 </body>
 </html>

@@ -21,6 +21,12 @@
     withdrawalMode: "none",
     monthlyWithdrawal: 0,
     annualWithdrawalPercent: 4,
+    schdYield: 3.1,
+    schdPriceGrowth: 10,
+    schdDividendGrowth: 11,
+    schdReinvest: "all",
+    schdReinvestAmount: 0,
+    schdReinvestPercent: 50,
   };
 
   const I18N = {
@@ -63,7 +69,26 @@
       colEnd: "연말",
       disclaimer: "교육·참고용 계산기입니다. 세금, 수수료, 인플레이션은 반영하지 않습니다.",
       aboutTitle: "이 계산기는 이렇게 움직입니다",
-      aboutBody: "기초 자금, 매달 넣는 돈, 연 수익률, 기간을 넣으면 해마다 붙는 수익과 연말 자산이 표와 그래프에 나옵니다. 입력한 연 수익률이 1년 내내 일정하다고 보고, 그 이자를 매달 같은 속도로 나눕니다. 세금, 수수료, 물가 상승은 빼지 않습니다.",
+      aboutBody: "기초 자금, 매달 넣는 돈, 연 수익률, 기간을 넣으면 해마다 붙는 수익과 연말 자산이 표와 그래프에 나옵니다. 입력한 연 수익률이 1년 내내 일정하다고 보고, 그 이자를 매달 같은 속도로 나눕니다. 같은 납입으로 SCHD도 나란히 계산합니다. 배당률, 가격 상승, 배당 성장은 장기 평균이 기본값이고, 배당은 전액 또는 일부만 다시 살 수 있습니다. 세금, 수수료, 물가 상승은 빼지 않습니다.",
+      schdHint: "배당률 3.1%는 슈왑 분배수익률(2026년 7월 31일, 3.13%)을 반올림한 값입니다. 배당 성장률 11%는 2012–2025년 연간 배당이 늘어난 속도(CAGR 10.99%)입니다. 가격 상승률 10%는 설정 이후 총수익 연 13.42%에서 배당을 뺀 시세 상승 추정치입니다.",
+      schdYield: "연간 배당률 (%)",
+      schdPriceGrowth: "연간 가격 상승률 (%)",
+      schdDividendGrowth: "연간 배당 성장률 (%)",
+      schdReinvestAll: "배당 전액 재투자",
+      schdReinvestAmountMode: "일정 금액만 재투자",
+      schdReinvestPercentMode: "일정 비율만 재투자",
+      schdReinvestAmount: "월 재투자액",
+      schdAmountHint: "이번 달 배당 가운데 이 금액만 다시 삽니다. 배당이 더 적으면 전액을 재투자합니다.",
+      schdReinvestPercent: "재투자 비율 (%)",
+      schdPercentHint: "이번 달 배당의 이 비율만 다시 사고, 나머지는 현금으로 쌓입니다.",
+      schdTotal: "SCHD 자산",
+      schdCash: "현금 배당",
+      schdGap: "복리와 차이",
+      colSchd: "SCHD",
+      colDividendCash: "현금 배당",
+      compoundLegend: "복리",
+      chartSchd: "SCHD 자산",
+      chartSchdCash: "현금 배당",
       guidesTitle: "많이 찾는 적립식 계산",
       load: "불러오기",
       remove: "삭제",
@@ -117,7 +142,26 @@
       colEnd: "End",
       disclaimer: "For education and planning only. Taxes, fees, and inflation are not included.",
       aboutTitle: "How this calculator works",
-      aboutBody: "Enter a starting balance, a monthly amount, an annual return, and a time span. The table and chart show each year's growth and the balance at year end. The annual return you enter is treated as steady, and that interest is applied evenly each month. Taxes, fees, and inflation are left out.",
+      aboutBody: "Enter a starting balance, a monthly amount, an annual return, and a time span. The table and chart show each year's growth and the balance at year end. The annual return you enter is treated as steady, and that interest is applied evenly each month. The same contributions are also run for SCHD. Dividend yield, price growth, and dividend growth start from long-run averages, and you can reinvest all, a fixed amount, or a percentage of each dividend. Taxes, fees, and inflation are left out.",
+      schdHint: "The 3.1% yield is Schwab’s distribution yield as of 31 July 2026 (3.13%), rounded. The 11% dividend growth is the 2012–2025 dividend CAGR (10.99%). The 10% price growth is an estimate of price appreciation after taking the dividend out of the 13.42% annualized total return since inception.",
+      schdYield: "Annual dividend yield (%)",
+      schdPriceGrowth: "Annual price growth (%)",
+      schdDividendGrowth: "Annual dividend growth (%)",
+      schdReinvestAll: "Reinvest all dividends",
+      schdReinvestAmountMode: "Reinvest a fixed amount",
+      schdReinvestPercentMode: "Reinvest a percentage",
+      schdReinvestAmount: "Monthly reinvestment",
+      schdAmountHint: "Only this much of the month’s dividend is used to buy more shares. If the dividend is smaller, all of it is reinvested.",
+      schdReinvestPercent: "Reinvestment share (%)",
+      schdPercentHint: "This share of each month’s dividend buys more shares. The rest is kept as cash.",
+      schdTotal: "SCHD assets",
+      schdCash: "Cash dividends",
+      schdGap: "Versus compound",
+      colSchd: "SCHD",
+      colDividendCash: "Cash dividends",
+      compoundLegend: "Compound",
+      chartSchd: "SCHD assets",
+      chartSchdCash: "Cash dividends",
       guidesTitle: "Calculations people look up",
       load: "Load",
       remove: "Delete",
@@ -155,6 +199,16 @@
     totalContributed: document.getElementById("totalContributed"),
     totalWithdrawn: document.getElementById("totalWithdrawn"),
     gain: document.getElementById("gain"),
+    schdYield: document.getElementById("schdYield"),
+    schdPriceGrowth: document.getElementById("schdPriceGrowth"),
+    schdDividendGrowth: document.getElementById("schdDividendGrowth"),
+    schdAmountField: document.getElementById("schdAmountField"),
+    schdPercentField: document.getElementById("schdPercentField"),
+    schdReinvestAmount: document.getElementById("schdReinvestAmount"),
+    schdReinvestPercent: document.getElementById("schdReinvestPercent"),
+    schdTotal: document.getElementById("schdTotal"),
+    schdCash: document.getElementById("schdCash"),
+    schdGap: document.getElementById("schdGap"),
     resetDefaults: document.getElementById("resetDefaults"),
     saveScenario: document.getElementById("saveScenario"),
     exportJson: document.getElementById("exportJson"),
@@ -246,6 +300,13 @@
       withdrawalMode: mode,
       monthlyWithdrawal: Math.max(0, parseMoney(els.monthlyWithdrawal.value)),
       annualWithdrawalPercent: Math.max(0, num(els.annualWithdrawalPercent)),
+      schdYield: num(els.schdYield, 3.1),
+      schdPriceGrowth: num(els.schdPriceGrowth, 10),
+      schdDividendGrowth: num(els.schdDividendGrowth, 11),
+      schdReinvest:
+        document.querySelector('input[name="schdReinvest"]:checked')?.value || "all",
+      schdReinvestAmount: Math.max(0, parseMoney(els.schdReinvestAmount.value)),
+      schdReinvestPercent: Math.min(100, Math.max(0, num(els.schdReinvestPercent, 50))),
     };
   }
 
@@ -258,12 +319,21 @@
     els.years.value = state.years;
     els.monthlyWithdrawal.value = formatGrouped(state.monthlyWithdrawal);
     els.annualWithdrawalPercent.value = state.annualWithdrawalPercent;
+    els.schdYield.value = state.schdYield ?? DEFAULTS.schdYield;
+    els.schdPriceGrowth.value = state.schdPriceGrowth ?? DEFAULTS.schdPriceGrowth;
+    els.schdDividendGrowth.value = state.schdDividendGrowth ?? DEFAULTS.schdDividendGrowth;
+    els.schdReinvestAmount.value = formatGrouped(state.schdReinvestAmount ?? 0);
+    els.schdReinvestPercent.value = state.schdReinvestPercent ?? DEFAULTS.schdReinvestPercent;
 
     document.querySelectorAll('input[name="withdrawalMode"]').forEach((radio) => {
       radio.checked = radio.value === state.withdrawalMode;
     });
+    document.querySelectorAll('input[name="schdReinvest"]').forEach((radio) => {
+      radio.checked = radio.value === (state.schdReinvest || "all");
+    });
 
     syncWithdrawalFields();
+    syncSchdFields();
     applyI18n();
     updateCurrencySuffixes();
     render();
@@ -276,6 +346,13 @@
       "none";
     els.fixedWithdrawalField.hidden = mode !== "fixed";
     els.percentWithdrawalField.hidden = mode !== "percent";
+  }
+
+  function syncSchdFields() {
+    const mode =
+      document.querySelector('input[name="schdReinvest"]:checked')?.value || "all";
+    els.schdAmountField.hidden = mode !== "amount";
+    els.schdPercentField.hidden = mode !== "percent";
   }
 
   function monthlyRate(annualReturnPct) {
@@ -349,6 +426,49 @@
     };
   }
 
+  function simulateSchd(state) {
+    const priceRate = monthlyRate(state.schdPriceGrowth);
+    const dividendRate = monthlyRate(state.schdDividendGrowth);
+    let price = 100;
+    let annualDividend = price * (state.schdYield / 100);
+    let shares = state.initialBalance > 0 && price > 0 ? state.initialBalance / price : 0;
+    let cash = 0;
+    const years = [];
+
+    for (let year = 1; year <= state.years; year += 1) {
+      for (let m = 0; m < 12; m += 1) {
+        if (state.monthlyContribution > 0 && price > 0) {
+          shares += state.monthlyContribution / price;
+        }
+        const dividend = shares * (annualDividend / 12);
+        let reinvest = 0;
+        if (state.schdReinvest === "amount") {
+          reinvest = Math.min(dividend, state.schdReinvestAmount);
+        } else if (state.schdReinvest === "percent") {
+          reinvest = dividend * (state.schdReinvestPercent / 100);
+        } else {
+          reinvest = dividend;
+        }
+        cash += Math.max(0, dividend - reinvest);
+        if (reinvest > 0 && price > 0) shares += reinvest / price;
+        price *= 1 + priceRate;
+        annualDividend *= 1 + dividendRate;
+        if (!Number.isFinite(price) || price < 0) price = 0;
+        if (!Number.isFinite(annualDividend) || annualDividend < 0) annualDividend = 0;
+      }
+      const market = shares * price;
+      years.push({ year, market, cash, total: market + cash });
+    }
+
+    const last = years[years.length - 1];
+    return {
+      years,
+      finalMarket: last ? last.market : state.initialBalance,
+      finalCash: last ? last.cash : 0,
+      finalTotal: last ? last.total : state.initialBalance,
+    };
+  }
+
   function formatKrw(amount) {
     const sign = amount < 0 ? "-" : "";
     const abs = Math.abs(amount);
@@ -391,7 +511,7 @@
     );
   }
 
-  function renderSummary(result, state) {
+  function renderSummary(result, schd, state) {
     els.resultsHeading.textContent = t("resultsTitle", state.years);
     els.finalBalance.innerHTML = moneyHtml(
       result.finalBalance,
@@ -411,11 +531,21 @@
     els.gain.innerHTML = moneyHtml(result.gain, state.currency, state.language);
     els.gain.classList.toggle("positive", result.gain > 0);
     els.gain.classList.toggle("negative", result.gain < 0);
+
+    const gap = schd.finalTotal - result.finalBalance;
+    els.schdTotal.innerHTML = moneyHtml(schd.finalTotal, state.currency, state.language);
+    els.schdCash.innerHTML = moneyHtml(schd.finalCash, state.currency, state.language);
+    els.schdGap.innerHTML = moneyHtml(gap, state.currency, state.language);
+    els.schdGap.classList.toggle("positive", gap > 0);
+    els.schdGap.classList.toggle("negative", gap < 0);
   }
 
-  function renderTable(result, state) {
+  function renderTable(result, schd, state) {
     const rows = result.years
       .map((row) => {
+        const schdRow = schd.years.find((item) => item.year === row.year);
+        const schdTotal = schdRow ? schdRow.total : 0;
+        const schdCash = schdRow ? schdRow.cash : 0;
         return `<tr>
           <td>${t("yearLabel", row.year)}</td>
           <td>${moneyHtml(row.start, state.currency, state.language)}</td>
@@ -423,6 +553,8 @@
           <td class="${row.growth > 0 ? "num-up" : row.growth < 0 ? "num-down" : ""}">${moneyHtml(row.growth, state.currency, state.language)}</td>
           <td>${moneyHtml(row.withdrawn, state.currency, state.language)}</td>
           <td class="col-end">${moneyHtml(row.end, state.currency, state.language)}</td>
+          <td class="col-schd">${moneyHtml(schdTotal, state.currency, state.language)}</td>
+          <td>${moneyHtml(schdCash, state.currency, state.language)}</td>
         </tr>`;
       })
       .join("");
@@ -431,7 +563,7 @@
 
   let chartModel = null;
 
-  function drawChart(result, state, hoverYear = null) {
+  function drawChart(result, schd, state, hoverYear = null) {
     const canvas = els.chart;
     const dpr = window.devicePixelRatio || 1;
     const cssWidth = canvas.clientWidth || 800;
@@ -454,7 +586,11 @@
     const plotH = cssHeight - padding.top - padding.bottom;
 
     const points = [{ year: 0, value: state.initialBalance }, ...result.years.map((y) => ({ year: y.year, value: y.end }))];
-    const rawMax = Math.max(...points.map((p) => p.value), 1);
+    const schdPoints = [
+      { year: 0, value: state.initialBalance, cash: 0 },
+      ...schd.years.map((y) => ({ year: y.year, value: y.total, cash: y.cash })),
+    ];
+    const rawMax = Math.max(...points.map((p) => p.value), ...schdPoints.map((p) => p.value), 1);
     const step = niceStep(rawMax / 4);
     const ticks = Math.max(1, Math.ceil(rawMax / step));
     const maxValue = step * ticks;
@@ -508,6 +644,35 @@
     ctx.lineWidth = 2.5;
     ctx.stroke();
 
+    ctx.beginPath();
+    schdPoints.forEach((p, i) => {
+      const x = xAt(p.year);
+      const y = yAt(p.value);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = "#ffd54a";
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    ctx.font = "12px Segoe UI, Apple SD Gothic Neo, sans-serif";
+    const legend = [
+      { color: "#6ec8ff", label: t("compoundLegend") },
+      { color: "#ffd54a", label: "SCHD" },
+    ];
+    let legendX = padding.left + plotW;
+    for (let i = legend.length - 1; i >= 0; i -= 1) {
+      const width = ctx.measureText(legend[i].label).width + 16;
+      legendX -= width;
+      ctx.fillStyle = legend[i].color;
+      ctx.beginPath();
+      ctx.arc(legendX, 14, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#f6ecff";
+      ctx.fillText(legend[i].label, legendX + 8, 18);
+      legendX -= 12;
+    }
+
     drawMultipleMarks(ctx, result, state, xAt, yAt, cssWidth);
 
     const labelStep = state.years > 20 ? 5 : state.years > 10 ? 2 : 1;
@@ -516,10 +681,11 @@
       ctx.fillText(String(year), xAt(year) - 4, cssHeight - 12);
     }
 
-    chartModel = { result, state, points, xAt, cssWidth };
+    chartModel = { result, schd, state, points, xAt, cssWidth };
 
     if (hoverYear == null) return;
     const point = points.find((item) => item.year === hoverYear);
+    const schdPoint = schdPoints.find((item) => item.year === hoverYear);
     if (!point) return;
 
     const x = xAt(point.year);
@@ -536,6 +702,12 @@
     ctx.beginPath();
     ctx.arc(x, y, 4.5, 0, Math.PI * 2);
     ctx.fill();
+    if (schdPoint) {
+      ctx.fillStyle = "#ffd54a";
+      ctx.beginPath();
+      ctx.arc(x, yAt(schdPoint.value), 4.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
     const hover = hoverTotals(result, state, point.year);
     const money = (amount) => formatMoney(amount, state.currency, state.language);
@@ -548,6 +720,8 @@
         color: hover.gain > 0 ? "#4fd1a5" : hover.gain < 0 ? "#f07178" : "#f6ecff",
       },
       { label: t("chartWithdrawn"), value: money(hover.withdrawn), color: "#f6ecff" },
+      { label: t("chartSchd"), value: money(schdPoint ? schdPoint.value : state.initialBalance), color: "#ffd54a" },
+      { label: t("chartSchdCash"), value: money(schdPoint ? schdPoint.cash : 0), color: "#f6ecff" },
     ];
     const title = point.year === 0 ? t("chartStart") : t("yearLabel", point.year);
     ctx.font = "600 13px Segoe UI, Apple SD Gothic Neo, sans-serif";
@@ -750,9 +924,10 @@
   function render() {
     const state = readState();
     const result = simulate(state);
-    renderSummary(result, state);
-    renderTable(result, state);
-    drawChart(result, state);
+    const schd = simulateSchd(state);
+    renderSummary(result, schd, state);
+    renderTable(result, schd, state);
+    drawChart(result, schd, state);
   }
 
   function persistCurrent() {
@@ -871,11 +1046,13 @@
     if (
       event?.target === els.initialBalance ||
       event?.target === els.monthlyContribution ||
-      event?.target === els.monthlyWithdrawal
+      event?.target === els.monthlyWithdrawal ||
+      event?.target === els.schdReinvestAmount
     ) {
       formatMoneyField(event.target);
     }
     syncWithdrawalFields();
+    syncSchdFields();
     applyI18n();
     updateCurrencySuffixes();
     render();
@@ -905,7 +1082,7 @@
 
   function nudgeInput(input, direction) {
     const currency = els.currency.value;
-    if (input === els.initialBalance || input === els.monthlyContribution || input === els.monthlyWithdrawal) {
+    if (input === els.initialBalance || input === els.monthlyContribution || input === els.monthlyWithdrawal || input === els.schdReinvestAmount) {
       const current = parseMoney(input.value);
       input.value = formatGrouped(Math.max(0, current + direction * moneyStep(current, currency, direction)));
     } else if (input === els.years) {
@@ -914,6 +1091,10 @@
       input.value = String(roundTenth(Math.min(100, Math.max(-50, num(input) + direction * 0.5))));
     } else if (input === els.annualWithdrawalPercent) {
       input.value = String(roundTenth(Math.min(100, Math.max(0, num(input) + direction * 0.5))));
+    } else if (input === els.schdYield || input === els.schdPriceGrowth || input === els.schdDividendGrowth) {
+      input.value = String(roundTenth(Math.min(100, Math.max(-50, num(input) + direction * 0.1))));
+    } else if (input === els.schdReinvestPercent) {
+      input.value = String(Math.min(100, Math.max(0, Math.round(num(input) + direction * 5))));
     } else {
       return;
     }
@@ -967,6 +1148,11 @@
       els.years,
       els.monthlyWithdrawal,
       els.annualWithdrawalPercent,
+      els.schdYield,
+      els.schdPriceGrowth,
+      els.schdDividendGrowth,
+      els.schdReinvestAmount,
+      els.schdReinvestPercent,
     ];
 
     inputs.forEach((el) => {
@@ -977,6 +1163,9 @@
     bindSteppers();
 
     document.querySelectorAll('input[name="withdrawalMode"]').forEach((radio) => {
+      radio.addEventListener("change", onInputChange);
+    });
+    document.querySelectorAll('input[name="schdReinvest"]').forEach((radio) => {
       radio.addEventListener("change", onInputChange);
     });
 
@@ -1067,16 +1256,16 @@
     els.chart.addEventListener("pointermove", (event) => {
       if (!chartModel) return;
       const bounds = els.chart.getBoundingClientRect();
-      drawChart(chartModel.result, chartModel.state, hoverYearAt(event.clientX - bounds.left));
+      drawChart(chartModel.result, chartModel.schd, chartModel.state, hoverYearAt(event.clientX - bounds.left));
     });
     els.chart.addEventListener("pointerleave", () => {
       if (!chartModel) return;
-      drawChart(chartModel.result, chartModel.state, null);
+      drawChart(chartModel.result, chartModel.schd, chartModel.state, null);
     });
 
     window.addEventListener("resize", () => {
       const state = readState();
-      drawChart(simulate(state), state);
+      drawChart(simulate(state), simulateSchd(state), state);
     });
   }
 
