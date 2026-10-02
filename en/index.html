@@ -32,7 +32,7 @@
     "description": "Calculate the balance after 10, 20, or 30 years of monthly contributions."
   }
   </script>
-  <link rel="stylesheet" href="../styles.css?v=20" />
+  <link rel="stylesheet" href="../styles.css?v=21" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄</text></svg>" />
 </head>
 <body>
@@ -168,7 +168,13 @@
         </fieldset>
 
         <fieldset class="fieldset">
-          <legend>SCHD</legend>
+          <legend>
+            <label class="legend-check">
+              <input id="schdEnabled" type="checkbox" />
+              <span data-i18n="schdCompare">Compare SCHD</span>
+            </label>
+          </legend>
+          <div id="schdSettings" hidden>
           <p class="hint" data-i18n="schdHint">The 3.1% yield is Schwab’s distribution yield as of 31 July 2026 (3.13%), rounded. The 11% dividend growth is the 2012–2025 dividend CAGR (10.99%). The 10% price growth is an estimate of price appreciation after taking the dividend out of the 13.42% annualized total return since inception.</p>
           <div class="field">
             <label for="schdYield" data-i18n="schdYield">Annual dividend yield (%)</label>
@@ -241,6 +247,7 @@
             </div>
             <p class="hint" data-i18n="schdPercentHint">This share of each month’s dividend buys more shares. The rest is kept as cash.</p>
           </div>
+          </div>
         </fieldset>
 
         <fieldset class="fieldset scenarios">
@@ -285,7 +292,7 @@
           </article>
         </div>
 
-        <div class="summary summary-schd">
+        <div class="summary summary-schd" id="schdSummary" hidden>
           <article class="stat stat-schd">
             <h3 data-i18n="schdTotal">SCHD assets</h3>
             <p class="stat-value" id="schdTotal">—</p>
@@ -315,7 +322,7 @@
                 <th data-i18n="colWithdraw">Out</th>
                 <th class="col-end" data-i18n="colEnd">End</th>
                 <th class="col-schd" data-i18n="colSchd">SCHD</th>
-                <th data-i18n="colDividendCash">Cash dividends</th>
+                <th class="col-dividend" data-i18n="colDividendCash">Cash dividends</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -326,7 +333,7 @@
 
     <section class="seo-note" aria-labelledby="about-heading">
       <h2 id="about-heading" data-i18n="aboutTitle">How this calculator works</h2>
-      <p data-i18n="aboutBody">Enter a starting balance, a monthly amount, an annual return, and a time span. The table and chart show each year's growth and the balance at year end. The annual return you enter is treated as steady, and that interest is applied evenly each month. The same contributions are also run for SCHD. Dividend yield, price growth, and dividend growth start from long-run averages, and you can reinvest all, a fixed amount, or a percentage of each dividend. Taxes, fees, and inflation are left out.</p>
+      <p data-i18n="aboutBody">Enter a starting balance, a monthly amount, an annual return, and a time span. The table and chart show each year's growth and the balance at year end. The annual return you enter is treated as steady, and that interest is applied evenly each month. Turn on Compare SCHD to run the same contributions with dividend reinvestment. Dividend yield, price growth, and dividend growth start from long-run averages, and you can reinvest all, a fixed amount, or a percentage of each dividend. Taxes, fees, and inflation are left out.</p>
       <h2 data-i18n="guidesTitle">Calculations people look up</h2>
       <p>These walkthroughs are in Korean. Each link opens the calculator with that monthly amount, return, and time span filled in.</p>
       <ul class="guide-links">
@@ -366,6 +373,6 @@
     </footer>
   </div>
 
-  <script src="../app.js?v=28"></script>
+  <script src="../app.js?v=29"></script>
 </body>
 </html>

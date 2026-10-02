@@ -145,6 +145,23 @@ button,
   font-size: 1.05rem;
 }
 
+.legend-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+}
+
+#schdSettings[hidden],
+.summary-schd[hidden] {
+  display: none !important;
+}
+
+#yearTable:not(.schd-on) .col-schd,
+#yearTable:not(.schd-on) .col-dividend {
+  display: none;
+}
+
 .field {
   display: grid;
   gap: 0.35rem;
