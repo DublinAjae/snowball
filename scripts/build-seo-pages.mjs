@@ -252,8 +252,8 @@ const english = index
     ">Enter a starting balance, a monthly amount, an annual return, and a time span. The table and chart show each year's growth and the balance at year end. The annual return you enter is treated as steady, and that interest is applied evenly each month. Turn on Compare SCHD to run the same contributions with dividend reinvestment. Dividend yield, price growth, and dividend growth start from long-run averages, and you can reinvest all, a fixed amount, or a percentage of each dividend. Taxes, fees, and inflation are left out.<"
   )
   .replace(
-    ">배당률 3.1%는 슈왑 분배수익률(2026년 7월 31일, 3.13%)을 반올림한 값입니다. 배당 성장률 11%는 2012–2025년 연간 배당이 늘어난 속도(CAGR 10.99%)입니다. 가격 상승률 10%는 설정 이후 총수익 연 13.42%에서 배당을 뺀 시세 상승 추정치입니다.<",
-    ">The 3.1% yield is Schwab’s distribution yield as of 31 July 2026 (3.13%), rounded. The 11% dividend growth is the 2012–2025 dividend CAGR (10.99%). The 10% price growth is an estimate of price appreciation after taking the dividend out of the 13.42% annualized total return since inception.<"
+    ">배당률 3.1%는 현재 분배수익률입니다. 배당 성장률 11%는 2012–2025년 연간 배당이 늘어난 속도(CAGR 10.99%)입니다. 가격 상승률 6%는 과거 시세 상승(약 10%)보다 낮게 잡은 보수적 가정입니다.<",
+    ">The 3.1% yield is the current distribution yield. The 11% dividend growth is the 2012–2025 dividend CAGR (10.99%). The 6% price growth is a conservative assumption, below the historical price rise of about 10%.<"
   )
   .replace(">연간 배당률 (%)<", ">Annual dividend yield (%)<")
   .replace(">연간 가격 상승률 (%)<", ">Annual price growth (%)<")
