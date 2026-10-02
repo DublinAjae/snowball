@@ -149,7 +149,20 @@ button,
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
+  padding: 0.28rem 0.75rem 0.28rem 0.5rem;
+  border: 1px solid #d4a017;
+  border-radius: 999px;
+  background: rgba(255, 213, 74, 0.16);
+  color: #ffd54a;
+  font-weight: 700;
   cursor: pointer;
+}
+
+.legend-check input {
+  width: 1.05rem;
+  height: 1.05rem;
+  margin: 0;
+  accent-color: #ffd54a;
 }
 
 #schdSettings[hidden],
