@@ -62,6 +62,9 @@
       colGrowth: "수익",
       colEnd: "연말",
       disclaimer: "교육·참고용 계산기입니다. 세금, 수수료, 인플레이션은 반영하지 않습니다.",
+      aboutTitle: "이 계산기는 이렇게 움직입니다",
+      aboutBody: "기초 자금, 매달 넣는 돈, 연 수익률, 기간을 넣으면 해마다 붙는 수익과 연말 자산이 표와 그래프에 나옵니다. 입력한 연 수익률이 1년 내내 일정하다고 보고, 그 이자를 매달 같은 속도로 나눕니다. 세금, 수수료, 물가 상승은 빼지 않습니다.",
+      guidesTitle: "많이 찾는 적립식 계산",
       load: "불러오기",
       remove: "삭제",
       emptyScenarios: "저장된 시나리오가 없습니다.",
@@ -113,6 +116,9 @@
       colGrowth: "Growth",
       colEnd: "End",
       disclaimer: "For education and planning only. Taxes, fees, and inflation are not included.",
+      aboutTitle: "How this calculator works",
+      aboutBody: "Enter a starting balance, a monthly amount, an annual return, and a time span. The table and chart show each year's growth and the balance at year end. The annual return you enter is treated as steady, and that interest is applied evenly each month. Taxes, fees, and inflation are left out.",
+      guidesTitle: "Calculations people look up",
       load: "Load",
       remove: "Delete",
       emptyScenarios: "No saved scenarios yet.",
@@ -806,8 +812,17 @@
   function syncExampleUrl(state) {
     const match = matchingExample(state);
     const url = new URL(window.location.href);
-    if (match) url.searchParams.set("e", match.id);
-    else url.searchParams.delete("e");
+    if (match) {
+      url.searchParams.set("e", match.id);
+      ["c", "m", "y", "r", "i"].forEach((key) => url.searchParams.delete(key));
+    } else {
+      url.searchParams.delete("e");
+      url.searchParams.set("c", state.currency);
+      url.searchParams.set("m", String(state.monthlyContribution));
+      url.searchParams.set("y", String(state.years));
+      url.searchParams.set("r", String(state.annualReturn));
+      url.searchParams.set("i", String(state.initialBalance));
+    }
     const next = `${url.pathname}${url.search}${url.hash}`;
     const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
     if (next !== current) window.history.replaceState(null, "", next);
@@ -939,8 +954,13 @@
   }
 
   function bindEvents() {
+    els.language.addEventListener("change", () => {
+      const lang = els.language.value === "en" ? "en" : "ko";
+      if (lang === pathLanguage()) return;
+      window.location.assign(siblingLanguageUrl(lang));
+    });
+
     const inputs = [
-      els.language,
       els.currency,
       els.initialBalance,
       els.monthlyContribution,
@@ -1061,15 +1081,55 @@
     });
   }
 
+  function pathLanguage() {
+    const path = window.location.pathname.replace(/index\.html$/, "");
+    return /\/en\/?$/.test(path) ? "en" : "ko";
+  }
+
+  function siblingLanguageUrl(lang) {
+    const url = new URL(window.location.href);
+    let path = url.pathname.replace(/index\.html$/, "");
+    if (!path.endsWith("/")) path += "/";
+    if (lang === "en") {
+      if (!path.endsWith("/en/")) path += "en/";
+    } else {
+      path = path.replace(/en\/$/, "");
+    }
+    url.pathname = path;
+    return url.toString();
+  }
+
+  function stateFromQuery(lang) {
+    const params = new URLSearchParams(window.location.search);
+    const currency = params.get("c") === "EUR" ? "EUR" : "KRW";
+    return {
+      ...DEFAULTS,
+      language: lang,
+      currency,
+      initialBalance: Math.max(0, Number(params.get("i")) || 0),
+      monthlyContribution: Math.max(0, Number(params.get("m")) || 0),
+      annualReturn: params.has("r") ? Number(params.get("r")) || 0 : DEFAULTS.annualReturn,
+      years: params.has("y") ? clampYears(Number(params.get("y"))) : DEFAULTS.years,
+      withdrawalMode: "none",
+      monthlyWithdrawal: 0,
+    };
+  }
+
   function init() {
     bindEvents();
-    const requested = new URLSearchParams(window.location.search).get("e");
-    const example = EXAMPLES.find((item) => item.id === requested);
-    const saved = loadPersisted();
+    const params = new URLSearchParams(window.location.search);
+    const example = EXAMPLES.find((item) => item.id === params.get("e"));
+    const lang = pathLanguage();
+    const hasCalcQuery = ["c", "m", "y", "r", "i"].some((key) => params.has(key));
     if (example) {
-      els.language.value = saved.language === "en" ? "en" : "ko";
+      els.language.value = lang;
       writeState(exampleState(example));
+    } else if (hasCalcQuery) {
+      els.language.value = lang;
+      writeState(stateFromQuery(lang));
     } else {
+      const saved = loadPersisted();
+      saved.language = lang;
       writeState(saved, { skipPersist: true });
     }
     renderExamples();

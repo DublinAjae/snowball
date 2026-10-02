@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Snowball Compound Interest Calculator | Monthly savings after 10, 20, 30 years</title>
+  <meta name="description" content="Enter a monthly amount and an annual return to see the balance after 10, 20, or 30 years. At 6%, 300,000 won a month for 20 years becomes about 137 million won." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://dublinajae.github.io/snowball/en/" />
+  <link rel="alternate" hreflang="ko" href="https://dublinajae.github.io/snowball/" />
+  <link rel="alternate" hreflang="en" href="https://dublinajae.github.io/snowball/en/" />
+  <link rel="alternate" hreflang="x-default" href="https://dublinajae.github.io/snowball/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:site_name" content="Snowball" />
+  <meta property="og:title" content="Snowball Compound Interest Calculator | See what monthly saving becomes" />
+  <meta property="og:description" content="300,000 won a month for 20 years at 6% grows to about 137 million won. Change the amount, return, and years in the calculator." />
+  <meta property="og:url" content="https://dublinajae.github.io/snowball/en/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Snowball Compound Interest Calculator | See what monthly saving becomes" />
+  <meta name="twitter:description" content="See a 20-year and 10-year monthly saving result, then change the amount and return yourself." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Snowball - Compound Interest Calculator",
+    "url": "https://dublinajae.github.io/snowball/en/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "inLanguage": "en",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },
+    "description": "Calculate the balance after 10, 20, or 30 years of monthly contributions."
+  }
+  </script>
+  <link rel="stylesheet" href="../styles.css?v=19" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄</text></svg>" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">❄</span>
+        <div>
+          <h1 data-i18n="appTitle">Snowball - Compound Interest Calculator</h1>
+          <p class="tagline" data-i18n="tagline">Contribute, withdraw, and watch wealth grow year by year</p>
+        </div>
+      </div>
+      <div class="header-controls">
+        <label class="chip">
+          <span data-i18n="language">Language</span>
+          <select id="language" aria-label="Language">
+            <option value="ko">한국어</option>
+            <option value="en" selected>English</option>
+          </select>
+        </label>
+        <label class="chip">
+          <span data-i18n="currency">Currency</span>
+          <select id="currency" aria-label="Currency">
+            <option value="EUR">EUR €</option>
+            <option value="KRW">KRW 원</option>
+          </select>
+        </label>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel inputs" aria-labelledby="inputs-heading">
+        <div class="panel-head">
+          <h2 id="inputs-heading" data-i18n="inputsTitle">Inputs</h2>
+          <button type="button" id="resetDefaults" class="btn ghost" data-i18n="reset">Defaults</button>
+        </div>
+
+        <div class="examples">
+          <p class="examples-label" data-i18n="examplesTitle">Shared examples</p>
+          <div class="example-row" id="exampleList"></div>
+          <p class="hint" data-i18n="examplesHint">Choosing an example updates the address. Send that link to open the same calculation.</p>
+        </div>
+
+        <div class="field">
+          <label for="initialBalance" data-i18n="initialBalance">Starting balance</label>
+          <div class="stepper">
+            <button type="button" class="step-btn" data-nudge="down" aria-label="Decrease">−</button>
+            <div class="input-with-suffix">
+              <input id="initialBalance" type="text" inputmode="numeric" autocomplete="off" />
+              <span class="suffix currency-suffix">€</span>
+            </div>
+            <button type="button" class="step-btn" data-nudge="up" aria-label="Increase">+</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="monthlyContribution" data-i18n="monthlyContribution">Monthly contribution</label>
+          <div class="stepper">
+            <button type="button" class="step-btn" data-nudge="down" aria-label="Decrease">−</button>
+            <div class="input-with-suffix">
+              <input id="monthlyContribution" type="text" inputmode="numeric" autocomplete="off" />
+              <span class="suffix currency-suffix">€</span>
+            </div>
+            <button type="button" class="step-btn" data-nudge="up" aria-label="Increase">+</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="annualReturn" data-i18n="annualReturn">Expected annual return (%)</label>
+          <div class="stepper">
+            <button type="button" class="step-btn" data-nudge="down" aria-label="Decrease">−</button>
+            <div class="input-with-suffix">
+              <input id="annualReturn" type="number" step="0.1" inputmode="decimal" />
+              <span class="suffix">%</span>
+            </div>
+            <button type="button" class="step-btn" data-nudge="up" aria-label="Increase">+</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="years" data-i18n="years">Years</label>
+          <div class="stepper">
+            <button type="button" class="step-btn" data-nudge="down" aria-label="Decrease">−</button>
+            <div class="input-with-suffix">
+              <input id="years" type="number" min="1" max="80" step="1" inputmode="numeric" />
+              <span class="suffix" data-i18n="yearsUnit">yrs</span>
+            </div>
+            <button type="button" class="step-btn" data-nudge="up" aria-label="Increase">+</button>
+          </div>
+        </div>
+
+        <fieldset class="fieldset">
+          <legend data-i18n="withdrawalTitle">Withdrawal</legend>
+          <div class="radio-row">
+            <label>
+              <input type="radio" name="withdrawalMode" value="none" checked />
+              <span data-i18n="withdrawalNone">None</span>
+            </label>
+            <label>
+              <input type="radio" name="withdrawalMode" value="fixed" />
+              <span data-i18n="withdrawalFixed">Fixed monthly amount</span>
+            </label>
+            <label>
+              <input type="radio" name="withdrawalMode" value="percent" />
+              <span data-i18n="withdrawalPercent">Annual percentage</span>
+            </label>
+          </div>
+
+          <div class="field withdrawal-field" id="fixedWithdrawalField" hidden>
+            <label for="monthlyWithdrawal" data-i18n="monthlyWithdrawal">Monthly withdrawal</label>
+            <div class="stepper">
+              <button type="button" class="step-btn" data-nudge="down" aria-label="Decrease">−</button>
+              <div class="input-with-suffix">
+                <input id="monthlyWithdrawal" type="text" inputmode="numeric" autocomplete="off" />
+                <span class="suffix currency-suffix">€</span>
+              </div>
+              <button type="button" class="step-btn" data-nudge="up" aria-label="Increase">+</button>
+            </div>
+          </div>
+
+          <div class="field withdrawal-field" id="percentWithdrawalField" hidden>
+            <label for="annualWithdrawalPercent" data-i18n="annualWithdrawalPercent">Annual withdrawal rate (%)</label>
+            <div class="stepper">
+              <button type="button" class="step-btn" data-nudge="down" aria-label="Decrease">−</button>
+              <div class="input-with-suffix">
+                <input id="annualWithdrawalPercent" type="number" min="0" max="100" step="0.1" inputmode="decimal" />
+                <span class="suffix">%</span>
+              </div>
+              <button type="button" class="step-btn" data-nudge="up" aria-label="Increase">+</button>
+            </div>
+            <p class="hint" data-i18n="percentHint">Each year, withdraw that percentage of the opening balance in 12 equal monthly parts.</p>
+          </div>
+        </fieldset>
+
+        <fieldset class="fieldset scenarios">
+          <legend data-i18n="scenariosTitle">Saved scenarios</legend>
+          <div class="field">
+            <label for="scenarioName" data-i18n="scenarioName">Name</label>
+            <input id="scenarioName" type="text" maxlength="60" placeholder="e.g. €200/mo · 7%" />
+          </div>
+          <div class="btn-row">
+            <button type="button" id="saveScenario" class="btn primary" data-i18n="save">Save</button>
+            <button type="button" id="exportJson" class="btn" data-i18n="export">Export</button>
+            <label class="btn file-btn">
+              <span data-i18n="import">Import</span>
+              <input id="importJson" type="file" accept="application/json,.json" hidden />
+            </label>
+          </div>
+          <ul id="scenarioList" class="scenario-list" aria-live="polite"></ul>
+        </fieldset>
+      </section>
+
+      <section class="panel results" aria-labelledby="results-heading">
+        <div class="panel-head">
+          <h2 id="results-heading">Results (30 years)</h2>
+        </div>
+
+        <div class="summary" id="summary">
+          <article class="stat stat-final">
+            <h3 data-i18n="finalBalance">Final balance</h3>
+            <p class="stat-value" id="finalBalance">—</p>
+          </article>
+          <article class="stat">
+            <h3 data-i18n="totalContributed">Total contributed</h3>
+            <p class="stat-value" id="totalContributed">—</p>
+          </article>
+          <article class="stat">
+            <h3 data-i18n="totalWithdrawn">Total withdrawn</h3>
+            <p class="stat-value" id="totalWithdrawn">—</p>
+          </article>
+          <article class="stat">
+            <h3 data-i18n="gain">Investment gain</h3>
+            <p class="stat-value" id="gain">—</p>
+          </article>
+        </div>
+
+        <div class="chart-wrap">
+          <canvas id="chart" width="800" height="320" role="img" aria-label="Asset growth chart"></canvas>
+        </div>
+
+        <div class="table-wrap">
+          <table id="yearTable">
+            <thead>
+              <tr>
+                <th data-i18n="colYear">Year</th>
+                <th data-i18n="colStart">Start</th>
+                <th data-i18n="colContrib">In</th>
+                <th data-i18n="colGrowth">Growth</th>
+                <th data-i18n="colWithdraw">Out</th>
+                <th class="col-end" data-i18n="colEnd">End</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <section class="seo-note" aria-labelledby="about-heading">
+      <h2 id="about-heading" data-i18n="aboutTitle">How this calculator works</h2>
+      <p data-i18n="aboutBody">Enter a starting balance, a monthly amount, an annual return, and a time span. The table and chart show each year's growth and the balance at year end. The annual return you enter is treated as steady, and that interest is applied evenly each month. Taxes, fees, and inflation are left out.</p>
+      <h2 data-i18n="guidesTitle">Calculations people look up</h2>
+      <p>These walkthroughs are in Korean. Each link opens the calculator with that monthly amount, return, and time span filled in.</p>
+      <ul class="guide-links">
+        <li><a href="../wol-30manwon-20nyeon/">월 30만원 20년 복리, 연 6%면 1억 3669만원</a></li>
+        <li><a href="../wol-30manwon-30nyeon/">월 30만원 30년 복리, 연 6%면 2억 9377만원</a></li>
+        <li><a href="../wol-50manwon-10nyeon/">월 50만원 10년 적립식, 연 7%면 8,600만원</a></li>
+        <li><a href="../wol-50manwon-30nyeon/">월 50만원 30년 복리, 연 6%면 4억 8962만원</a></li>
+        <li><a href="../wol-100manwon-10nyeon/">월 100만원 10년 적립식, 연 7%면 1억 7201만원</a></li>
+        <li><a href="../wol-100manwon-20nyeon/">월 100만원 20년 복리, 연 6%면 4억 5564만원</a></li>
+        <li><a href="../wol-10manwon-30nyeon/">월 10만원 30년 복리, 연 7%면 1억 1760만원</a></li>
+        <li><a href="../wol-20manwon-25nyeon/">월 20만원 25년 복리, 연 8%면 1억 8296만원</a></li>
+      </ul>
+    </section>
+
+    <footer class="footer">
+      <p data-i18n="disclaimer">For education and planning only. Taxes, fees, and inflation are not included.</p>
+      <nav class="social" aria-label="DublinAjae">
+        <a href="https://instagram.com/DublinAjae" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="17.4" cy="6.6" r="1.1" fill="currentColor"/>
+          </svg>
+          <span>Instagram</span>
+        </a>
+        <a href="https://youtube.com/@DublinAjae" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" width="22" height="20" aria-hidden="true">
+            <path fill="currentColor" d="M23 12.2s0-3.2-.4-4.6c-.2-.9-.9-1.6-1.8-1.8C19.2 5.4 12 5.4 12 5.4s-7.2 0-8.8.4c-.9.2-1.6.9-1.8 1.8C1 9 1 12.2 1 12.2s0 3.2.4 4.6c.2.9.9 1.6 1.8 1.8 1.6.4 8.8.4 8.8.4s7.2 0 8.8-.4c.9-.2 1.6-.9 1.8-1.8.4-1.4.4-4.6.4-4.6zM9.8 15.5v-6.6l6.2 3.3-6.2 3.3z"/>
+          </svg>
+          <span>YouTube</span>
+        </a>
+        <a href="https://brunch.co.kr/@dublinajae" target="_blank" rel="noopener noreferrer">
+          <img src="../brunch.png" width="20" height="20" alt="" />
+          <span>Brunch</span>
+        </a>
+      </nav>
+    </footer>
+  </div>
+
+  <script src="../app.js?v=26"></script>
+</body>
+</html>

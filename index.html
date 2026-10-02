@@ -3,9 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Snowball — retirement & dollar-cost averaging calculator" />
-  <title>눈덩이 - 복리 계산기</title>
-  <link rel="stylesheet" href="styles.css?v=18" />
+  <title>눈덩이 복리 계산기 | 월 30만원·50만원·100만원, 10년·20년·30년 뒤 자산</title>
+  <meta name="description" content="매달 넣는 돈과 연 수익률을 입력하면 10년, 20년, 30년 뒤 자산이 바로 나옵니다. 월 30만원 20년은 연 6%에 1억 3669만원, 월 100만원 10년은 연 7%에 1억 7201만원입니다." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://dublinajae.github.io/snowball/" />
+  <link rel="alternate" hreflang="ko" href="https://dublinajae.github.io/snowball/" />
+  <link rel="alternate" hreflang="en" href="https://dublinajae.github.io/snowball/en/" />
+  <link rel="alternate" hreflang="x-default" href="https://dublinajae.github.io/snowball/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:site_name" content="눈덩이" />
+  <meta property="og:title" content="눈덩이 복리 계산기 | 매달 넣으면 몇 년 뒤 얼마인가" />
+  <meta property="og:description" content="월 30만원을 20년, 연 6%로 넣으면 1억 3669만원. 월 100만원을 10년, 연 7%로 넣으면 1억 7201만원. 기간과 수익률은 바로 바꿔 볼 수 있습니다." />
+  <meta property="og:url" content="https://dublinajae.github.io/snowball/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="눈덩이 복리 계산기 | 매달 넣으면 몇 년 뒤 얼마인가" />
+  <meta name="twitter:description" content="월 30만원 20년 연 6%는 1억 3669만원, 월 100만원 10년 연 7%는 1억 7201만원. 적립식 복리를 표와 그래프로 계산합니다." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "눈덩이 - 복리 계산기",
+    "url": "https://dublinajae.github.io/snowball/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "inLanguage": "ko",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },
+    "description": "매달 적립하는 돈과 연 수익률로 10년, 20년, 30년 뒤 자산을 계산합니다."
+  }
+  </script>
+  <link rel="stylesheet" href="styles.css?v=19" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄</text></svg>" />
 </head>
 <body>
@@ -204,6 +231,22 @@
       </section>
     </main>
 
+    <section class="seo-note" aria-labelledby="about-heading">
+      <h2 id="about-heading" data-i18n="aboutTitle">이 계산기는 이렇게 움직입니다</h2>
+      <p data-i18n="aboutBody">기초 자금, 매달 넣는 돈, 연 수익률, 기간을 넣으면 해마다 붙는 수익과 연말 자산이 표와 그래프에 나옵니다. 입력한 연 수익률이 1년 내내 일정하다고 보고, 그 이자를 매달 같은 속도로 나눕니다. 세금, 수수료, 물가 상승은 빼지 않습니다.</p>
+      <h2 data-i18n="guidesTitle">많이 찾는 적립식 계산</h2>
+      <ul class="guide-links">
+        <li><a href="wol-30manwon-20nyeon/">월 30만원 20년 복리, 연 6%면 1억 3669만원</a></li>
+        <li><a href="wol-30manwon-30nyeon/">월 30만원 30년 복리, 연 6%면 2억 9377만원</a></li>
+        <li><a href="wol-50manwon-10nyeon/">월 50만원 10년 적립식, 연 7%면 8,600만원</a></li>
+        <li><a href="wol-50manwon-30nyeon/">월 50만원 30년 복리, 연 6%면 4억 8962만원</a></li>
+        <li><a href="wol-100manwon-10nyeon/">월 100만원 10년 적립식, 연 7%면 1억 7201만원</a></li>
+        <li><a href="wol-100manwon-20nyeon/">월 100만원 20년 복리, 연 6%면 4억 5564만원</a></li>
+        <li><a href="wol-10manwon-30nyeon/">월 10만원 30년 복리, 연 7%면 1억 1760만원</a></li>
+        <li><a href="wol-20manwon-25nyeon/">월 20만원 25년 복리, 연 8%면 1억 8296만원</a></li>
+      </ul>
+    </section>
+
     <footer class="footer">
       <p data-i18n="disclaimer">교육·참고용 계산기입니다. 세금, 수수료, 인플레이션은 반영하지 않습니다.</p>
       <nav class="social" aria-label="DublinAjae">
@@ -229,6 +272,6 @@
     </footer>
   </div>
 
-  <script src="app.js?v=25"></script>
+  <script src="app.js?v=26"></script>
 </body>
 </html>

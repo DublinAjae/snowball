@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dublinajae.github.io/snowball/sitemap.xml
