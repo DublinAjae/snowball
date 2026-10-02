@@ -5,10 +5,13 @@
   const SCENARIOS_KEY = "snowball:scenarios:v1";
 
   const EXAMPLES = [
-    { id: "eur-200", currency: "EUR", monthlyContribution: 200, annualReturn: 6, labelKo: "월 €200 · 6%", labelEn: "€200/mo · 6%" },
-    { id: "eur-500", currency: "EUR", monthlyContribution: 500, annualReturn: 6, labelKo: "월 €500 · 6%", labelEn: "€500/mo · 6%" },
-    { id: "eur-1000", currency: "EUR", monthlyContribution: 1000, annualReturn: 6, labelKo: "월 €1,000 · 6%", labelEn: "€1,000/mo · 6%" },
-    { id: "krw-500000", currency: "KRW", monthlyContribution: 500000, annualReturn: 6, labelKo: "월 50만원 · 6%", labelEn: "50만원/mo · 6%" },
+    { id: "eur-200", currency: "EUR", monthlyContribution: 200, annualReturn: 6, years: 40, labelKo: "월 €200 · 6%", labelEn: "€200/mo · 6%" },
+    { id: "eur-500", currency: "EUR", monthlyContribution: 500, annualReturn: 6, years: 40, labelKo: "월 €500 · 6%", labelEn: "€500/mo · 6%" },
+    { id: "eur-1000", currency: "EUR", monthlyContribution: 1000, annualReturn: 6, years: 40, labelKo: "월 €1,000 · 6%", labelEn: "€1,000/mo · 6%" },
+    { id: "krw-500000", currency: "KRW", monthlyContribution: 500000, annualReturn: 6, years: 40, labelKo: "월 50만원 · 6%", labelEn: "50만원/mo · 6%" },
+    { id: "krw-1000000-20", currency: "KRW", monthlyContribution: 1000000, annualReturn: 8, years: 20, labelKo: "월 100만원 · 20년 · 8%", labelEn: "100만원/mo · 20y · 8%" },
+    { id: "krw-1500000-30", currency: "KRW", monthlyContribution: 1500000, annualReturn: 9, years: 30, labelKo: "월 150만원 · 30년 · 9%", labelEn: "150만원/mo · 30y · 9%" },
+    { id: "krw-2000000-15", currency: "KRW", monthlyContribution: 2000000, annualReturn: 7, years: 15, labelKo: "월 200만원 · 15년 · 7%", labelEn: "200만원/mo · 15y · 7%" },
   ];
 
   const DEFAULTS = {
@@ -993,7 +996,7 @@
       initialBalance: 0,
       monthlyContribution: example.monthlyContribution,
       annualReturn: example.annualReturn,
-      years: 40,
+      years: example.years,
       withdrawalMode: "none",
     };
   }
@@ -1005,7 +1008,7 @@
         state.monthlyContribution === example.monthlyContribution &&
         state.annualReturn === example.annualReturn &&
         state.initialBalance === 0 &&
-        state.years === 40 &&
+        state.years === example.years &&
         state.withdrawalMode === "none"
     );
   }
