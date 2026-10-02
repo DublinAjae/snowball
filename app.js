@@ -170,7 +170,6 @@
 
   function applyI18n() {
     document.documentElement.lang = els.language.value;
-    document.title = t("appTitle");
     document.querySelectorAll("[data-i18n]").forEach((node) => {
       const key = node.getAttribute("data-i18n");
       node.textContent = t(key);
