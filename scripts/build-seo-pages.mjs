@@ -101,7 +101,8 @@ function pageHtml(page) {
   }
   </script>
   <link rel="stylesheet" href="../styles.css?v=19" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄</text></svg>" />
+  <link rel="icon" href="../favicon.png?v=1" type="image/png" />
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
 </head>
 <body>
   <article class="app guide">
@@ -198,6 +199,8 @@ const english = index
     '"description": "Calculate the balance after 10, 20, or 30 years of monthly contributions."'
   )
   .replace('href="styles.css', 'href="../styles.css')
+  .replace('href="favicon.png', 'href="../favicon.png')
+  .replace('href="apple-touch-icon.png"', 'href="../apple-touch-icon.png"')
   .replace('src="app.js', 'src="../app.js')
   .replace('src="brunch.png"', 'src="../brunch.png"')
   .replaceAll('href="wol-', 'href="../wol-')
