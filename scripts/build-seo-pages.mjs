@@ -201,6 +201,7 @@ const english = index
   .replace('href="styles.css', 'href="../styles.css')
   .replace('href="favicon.png', 'href="../favicon.png')
   .replace('href="apple-touch-icon.png"', 'href="../apple-touch-icon.png"')
+  .replace('src="apple-touch-icon.png"', 'src="../apple-touch-icon.png"')
   .replace('src="app.js', 'src="../app.js')
   .replace('src="brunch.png"', 'src="../brunch.png"')
   .replaceAll('href="wol-', 'href="../wol-')
