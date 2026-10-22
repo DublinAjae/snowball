@@ -32,7 +32,7 @@
     "description": "Calculate the balance after 10, 20, or 30 years of monthly contributions."
   }
   </script>
-  <link rel="stylesheet" href="../styles.css?v=23" />
+  <link rel="stylesheet" href="../styles.css?v=24" />
   <link rel="icon" href="../favicon.png?v=1" type="image/png" />
   <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
 </head>
@@ -299,7 +299,11 @@
             <p class="stat-value" id="schdTotal">—</p>
           </article>
           <article class="stat">
-            <h3 data-i18n="schdCash">Cash dividends</h3>
+            <h3 data-i18n="schdAnnualCash">Annual cash dividends</h3>
+            <p class="stat-value" id="schdAnnualCash">—</p>
+          </article>
+          <article class="stat">
+            <h3 data-i18n="schdCash">Cumulative cash dividends</h3>
             <p class="stat-value" id="schdCash">—</p>
           </article>
           <article class="stat">
@@ -323,7 +327,8 @@
                 <th data-i18n="colWithdraw">Out</th>
                 <th class="col-end" data-i18n="colEnd">End</th>
                 <th class="col-schd" data-i18n="colSchd">SCHD</th>
-                <th class="col-dividend" data-i18n="colDividendCash">Cash dividends</th>
+                <th class="col-dividend-annual" data-i18n="colAnnualDividendCash">Annual cash dividends</th>
+                <th class="col-dividend" data-i18n="colDividendCash">Cumulative cash dividends</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -374,6 +379,6 @@
     </footer>
   </div>
 
-  <script src="../app.js?v=32"></script>
+  <script src="../app.js?v=33"></script>
 </body>
 </html>

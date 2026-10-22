@@ -171,6 +171,7 @@ button,
 }
 
 #yearTable:not(.schd-on) .col-schd,
+#yearTable:not(.schd-on) .col-dividend-annual,
 #yearTable:not(.schd-on) .col-dividend {
   display: none;
 }
@@ -427,7 +428,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .summary-schd {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .stat-schd {

@@ -247,8 +247,10 @@ const english = index
   .replace(">연말<", ">End<")
   .replace(">SCHD 비교<", ">Compare SCHD<")
   .replace(">SCHD 자산<", ">SCHD assets<")
-  .replace(">현금 배당<", ">Cash dividends<")
-  .replace(">현금 배당<", ">Cash dividends<")
+  .replace(">연간 현금 배당<", ">Annual cash dividends<")
+  .replace(">연간 현금 배당<", ">Annual cash dividends<")
+  .replace(">누적 현금 배당<", ">Cumulative cash dividends<")
+  .replace(">누적 현금 배당<", ">Cumulative cash dividends<")
   .replace(">복리와 차이<", ">Versus compound<")
   .replace(">이 계산기는 이렇게 움직입니다<", ">How this calculator works<")
   .replace(

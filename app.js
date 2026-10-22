@@ -87,13 +87,16 @@
       schdReinvestPercent: "재투자 비율 (%)",
       schdPercentHint: "이번 달 배당의 이 비율만 다시 사고, 나머지는 현금으로 쌓입니다.",
       schdTotal: "SCHD 자산",
-      schdCash: "현금 배당",
+      schdAnnualCash: "연간 현금 배당",
+      schdCash: "누적 현금 배당",
       schdGap: "복리와 차이",
       colSchd: "SCHD",
-      colDividendCash: "현금 배당",
+      colAnnualDividendCash: "연간 현금 배당",
+      colDividendCash: "누적 현금 배당",
       compoundLegend: "복리",
       chartSchd: "SCHD 자산",
-      chartSchdCash: "현금 배당",
+      chartSchdAnnualCash: "연간 현금 배당",
+      chartSchdCash: "누적 현금 배당",
       guidesTitle: "많이 찾는 적립식 계산",
       load: "불러오기",
       remove: "삭제",
@@ -161,13 +164,16 @@
       schdReinvestPercent: "Reinvestment share (%)",
       schdPercentHint: "This share of each month’s dividend buys more shares. The rest is kept as cash.",
       schdTotal: "SCHD assets",
-      schdCash: "Cash dividends",
+      schdAnnualCash: "Annual cash dividends",
+      schdCash: "Cumulative cash dividends",
       schdGap: "Versus compound",
       colSchd: "SCHD",
-      colDividendCash: "Cash dividends",
+      colAnnualDividendCash: "Annual cash dividends",
+      colDividendCash: "Cumulative cash dividends",
       compoundLegend: "Compound",
       chartSchd: "SCHD assets",
-      chartSchdCash: "Cash dividends",
+      chartSchdAnnualCash: "Annual cash dividends",
+      chartSchdCash: "Cumulative cash dividends",
       guidesTitle: "Calculations people look up",
       load: "Load",
       remove: "Delete",
@@ -213,6 +219,7 @@
     schdReinvestAmount: document.getElementById("schdReinvestAmount"),
     schdReinvestPercent: document.getElementById("schdReinvestPercent"),
     schdTotal: document.getElementById("schdTotal"),
+    schdAnnualCash: document.getElementById("schdAnnualCash"),
     schdCash: document.getElementById("schdCash"),
     schdGap: document.getElementById("schdGap"),
     schdEnabled: document.getElementById("schdEnabled"),
@@ -452,10 +459,13 @@
     const years = [];
 
     for (let year = 1; year <= state.years; year += 1) {
+      let annualCash = 0;
       for (let m = 0; m < 12; m += 1) {
         if (state.monthlyContribution > 0 && price > 0) {
           shares += state.monthlyContribution / price;
         }
+        // The first dividend uses the starting dividend rate. Growth is applied
+        // only after that dividend has been calculated and distributed.
         const dividend = shares * (annualDividend / 12);
         let reinvest = 0;
         if (state.schdReinvest === "amount") {
@@ -465,7 +475,9 @@
         } else {
           reinvest = dividend;
         }
-        cash += Math.max(0, dividend - reinvest);
+        const cashDividend = Math.max(0, dividend - reinvest);
+        annualCash += cashDividend;
+        cash += cashDividend;
         if (reinvest > 0 && price > 0) shares += reinvest / price;
         price *= 1 + priceRate;
         annualDividend *= 1 + dividendRate;
@@ -473,13 +485,14 @@
         if (!Number.isFinite(annualDividend) || annualDividend < 0) annualDividend = 0;
       }
       const market = shares * price;
-      years.push({ year, market, cash, total: market + cash });
+      years.push({ year, market, annualCash, cash, total: market + cash });
     }
 
     const last = years[years.length - 1];
     return {
       years,
       finalMarket: last ? last.market : state.initialBalance,
+      finalAnnualCash: last ? last.annualCash : 0,
       finalCash: last ? last.cash : 0,
       finalTotal: last ? last.total : state.initialBalance,
     };
@@ -551,6 +564,7 @@
     if (!schd) return;
     const gap = schd.finalTotal - result.finalBalance;
     els.schdTotal.innerHTML = moneyHtml(schd.finalTotal, state.currency, state.language);
+    els.schdAnnualCash.innerHTML = moneyHtml(schd.finalAnnualCash, state.currency, state.language);
     els.schdCash.innerHTML = moneyHtml(schd.finalCash, state.currency, state.language);
     els.schdGap.innerHTML = moneyHtml(gap, state.currency, state.language);
     els.schdGap.classList.toggle("positive", gap > 0);
@@ -562,6 +576,7 @@
       .map((row) => {
         const schdRow = schd ? schd.years.find((item) => item.year === row.year) : null;
         const schdTotal = schdRow ? schdRow.total : 0;
+        const schdAnnualCash = schdRow ? schdRow.annualCash : 0;
         const schdCash = schdRow ? schdRow.cash : 0;
         return `<tr>
           <td>${t("yearLabel", row.year)}</td>
@@ -571,6 +586,7 @@
           <td>${moneyHtml(row.withdrawn, state.currency, state.language)}</td>
           <td class="col-end">${moneyHtml(row.end, state.currency, state.language)}</td>
           <td class="col-schd">${moneyHtml(schdTotal, state.currency, state.language)}</td>
+          <td class="col-dividend-annual">${moneyHtml(schdAnnualCash, state.currency, state.language)}</td>
           <td class="col-dividend">${moneyHtml(schdCash, state.currency, state.language)}</td>
         </tr>`;
       })
@@ -605,8 +621,13 @@
     const points = [{ year: 0, value: state.initialBalance }, ...result.years.map((y) => ({ year: y.year, value: y.end }))];
     const schdPoints = schd
       ? [
-          { year: 0, value: state.initialBalance, cash: 0 },
-          ...schd.years.map((y) => ({ year: y.year, value: y.total, cash: y.cash })),
+          { year: 0, value: state.initialBalance, annualCash: 0, cash: 0 },
+          ...schd.years.map((y) => ({
+            year: y.year,
+            value: y.total,
+            annualCash: y.annualCash,
+            cash: y.cash,
+          })),
         ]
       : [];
     const rawMax = Math.max(...points.map((p) => p.value), ...schdPoints.map((p) => p.value), 1);
@@ -745,6 +766,7 @@
     if (schdPoint) {
       rows.push(
         { label: t("chartSchd"), value: money(schdPoint.value), color: "#ffd54a" },
+        { label: t("chartSchdAnnualCash"), value: money(schdPoint.annualCash), color: "#f6ecff" },
         { label: t("chartSchdCash"), value: money(schdPoint.cash), color: "#f6ecff" }
       );
     }
